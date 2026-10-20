@@ -71,6 +71,7 @@ Turkish.
 │   ├── tables/                    Aggregated tables T1-T6 (csv, md, tex)
 │   ├── logs/                      Run configuration, data-validation log
 │   └── verification/              S6 validation, split and TTL-ablation output
+├── .gitattributes                 Pins LF line endings on all platforms
 ├── CITATION.cff                   Citation metadata
 ├── .zenodo.json                   Zenodo deposition metadata
 └── requirements.txt
@@ -279,10 +280,19 @@ Kilic, H. Adversarial Robustness of Mamba-Based Network Intrusion Detection:
 Code and Results. Zenodo. https://doi.org/10.5281/zenodo.23497561
 ```
 
+That is the concept DOI: it is stable across releases and always resolves to
+the most recent one. Cite it unless you need to pin a specific release, in
+which case use that release's own version DOI, which Zenodo lists under
+*Versions* on the record page.
+
+The corpus files the reported run consumed are deposited as a companion
+record, linked from this one under *Related works*. Two of the four are not
+the full public releases, so reproducing the published numbers requires those
+files rather than the upstream distributions.
+
 `CITATION.cff` carries the same metadata in machine-readable form, and
 `.zenodo.json` supplies the deposition fields Zenodo reads when it imports a
-release. Replace the placeholder DOI above once the first release is archived,
-and add the same DOI to the Data Availability statement of the manuscript.
+release.
 
 ---
 

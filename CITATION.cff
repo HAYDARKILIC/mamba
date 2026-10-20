@@ -19,6 +19,14 @@ authors:
       Department of Artificial Intelligence Engineering,
       Ostim Technical University, Ankara, Turkey
 license: MIT
+doi: 10.5281/zenodo.23497561
+repository-code: "https://github.com/HAYDARKILIC/mamba"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23497561
+    description: >-
+      Concept DOI. Stable across releases; always resolves to the most
+      recent one.
 keywords:
   - network intrusion detection
   - adversarial robustness
