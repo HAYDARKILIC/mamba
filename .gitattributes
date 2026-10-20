@@ -1,0 +1,17 @@
+# Line endings are pinned to LF in the working tree on every platform.
+# This is not cosmetic: analysis/check_published_artifacts.py compares the
+# nine LaTeX table bodies in published/tables_tex/ byte for byte against
+# freshly regenerated copies. A Windows checkout that rewrote LF to CRLF
+# would fail that comparison on files that are in fact correct.
+* text=auto eol=lf
+
+# Binary, never transformed and never diffed as text.
+*.pdf  binary
+*.png  binary
+
+# Notebooks are JSON but are not useful as text diffs, and must not be
+# rewritten by any filter.
+*.ipynb -text
+
+# Result frames and checksum-bearing files must stay byte-stable.
+*.csv  -text
