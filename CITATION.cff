@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software or its result files, please cite the archived release."
+title: "Adversarial Robustness of Mamba-Based Network Intrusion Detection: Code and Results"
+abstract: >-
+  Reproducibility artefact for a controlled comparison of a selective
+  state-space (Mamba/S6) intrusion detector against Transformer,
+  one-dimensional convolutional, bidirectional recurrent and Random Forest
+  baselines on NSL-KDD, NF-UNSW-NB15-v2 and CSE-CIC-IDS2018, under white-box
+  (FGSM, PGD) and black-box transfer attacks over seven random seeds. The
+  repository contains the pipeline, the verification notebooks and every
+  result file on which the reported tables and figures are based.
+type: software
+authors:
+  - given-names: Haydar
+    family-names: Kilic
+    email: haydar.kilic@ostimteknik.edu.tr
+    orcid: "https://orcid.org/0000-0002-2551-3772"
+    affiliation: >-
+      Department of Artificial Intelligence Engineering,
+      Ostim Technical University, Ankara, Turkey
+license: MIT
+keywords:
+  - network intrusion detection
+  - adversarial robustness
+  - state-space models
+  - Mamba
+  - evasion attacks
+  - adversarial training
+  - reproducibility

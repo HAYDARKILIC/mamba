@@ -1,0 +1,26 @@
+VERI SAGLIK KONTROLU RAPORU
+==================================================
+
+[NSL-KDD]
+  X_train: NaN/Inf yok (temiz).
+  X_test: NaN/Inf yok (temiz).
+  y_train sinif dagilimi: [67343, 58630] (oranlar: ['0.5346', '0.4654'])
+  y_test sinif dagilimi: [9711, 12833] (oranlar: ['0.4308', '0.5692'])
+  [UYARI] 24 ozellik sifira-yakin varyansa sahip (egitim setinde sabit deger) -- bu ozellikler modele bilgi katkisi saglamaz.
+  Saldiri alt-kategorileri (test, n>=5 -> analiz edilebilir): {'DoS': 7460, 'Probe': 2421, 'R2L': 2885, 'U2R': 67}
+
+[NF-UNSW-NB15]
+  X_train: NaN/Inf yok (temiz).
+  X_test: NaN/Inf yok (temiz).
+  y_train sinif dagilimi: [55706, 56269] (oranlar: ['0.4975', '0.5025'])
+  y_test sinif dagilimi: [13926, 13363] (oranlar: ['0.5103', '0.4897'])
+  [UYARI] 22 ozellik sifira-yakin varyansa sahip (egitim setinde sabit deger) -- bu ozellikler modele bilgi katkisi saglamaz.
+  Saldiri alt-kategorileri (test, n>=5 -> analiz edilebilir): {'Reconnaissance': 2486, 'Generic': 2626, 'Backdoor': 364, 'Analysis': 320, 'Exploits': 2930, 'Fuzzers': 3358, 'Shellcode': 279, 'DoS': 975, 'Worms': 25}
+
+[CICIDS2018]
+  X_train: NaN/Inf yok (temiz).
+  X_test: NaN/Inf yok (temiz).
+  y_train sinif dagilimi: [117949, 132194] (oranlar: ['0.4715', '0.5285'])
+  y_test sinif dagilimi: [31180, 31190] (oranlar: ['0.4999', '0.5001'])
+  [UYARI] 8 ozellik sifira-yakin varyansa sahip (egitim setinde sabit deger) -- bu ozellikler modele bilgi katkisi saglamaz.
+  Saldiri alt-kategorileri (test, n>=5 -> analiz edilebilir): {'Bot': 15000, 'Infilteration': 16190}

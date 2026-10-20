@@ -1,0 +1,441 @@
+{
+ "run_id": "20260710_193652",
+ "generated": "20261019_133317",
+ "config": {
+  "L": 64,
+  "d_model": 64,
+  "n_layers": 3,
+  "eps_list": [
+   0.01,
+   0.03,
+   0.05,
+   0.1
+  ],
+  "pgd_alpha": 0.01,
+  "pgd_steps": 10,
+  "datasets": [
+   "NSL-KDD",
+   "NF-UNSW-NB15"
+  ],
+  "models": [
+   "Mamba",
+   "Transformer",
+   "CNN1D",
+   "LSTM"
+  ],
+  "seeds": [
+   13,
+   42
+  ],
+  "batch": 512,
+  "device": "NVIDIA A100-SXM4-40GB"
+ },
+ "padding": {
+  "NSL-KDD": {
+   "d": 41,
+   "n_pad": 23,
+   "frac": 0.3594,
+   "n_test": 22544
+  },
+  "NF-UNSW-NB15": {
+   "d": 42,
+   "n_pad": 22,
+   "frac": 0.3438,
+   "n_test": 27289
+  }
+ },
+ "validity": [
+  {
+   "dataset": "NSL-KDD",
+   "model": "Mamba",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 0.7610894251242015,
+   "published": 0.7610894251242015,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "Mamba",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.5098030518097941,
+   "published": 0.5098030518097941,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "Mamba",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.27967530163236337,
+   "published": 0.2810947480482612,
+   "delta": -0.001419446415897807,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "Transformer",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 0.7802519517388219,
+   "published": 0.7802519517388219,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "Transformer",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.7201029098651526,
+   "published": 0.7201029098651526,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "Transformer",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.7383782824698367,
+   "published": 0.7377572746628814,
+   "delta": 0.0006210078069552871,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "CNN1D",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 0.76694464158978,
+   "published": 0.7670333569907736,
+   "delta": -8.871540099353314e-05,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "CNN1D",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.12344748048261178,
+   "published": 0.1234474804826117,
+   "delta": 8.326672684688674e-17,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "CNN1D",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.18488289567068844,
+   "published": 0.1825762952448545,
+   "delta": 0.0023066004258339434,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "LSTM",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 0.8100159687721789,
+   "published": 0.8100159687721789,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "LSTM",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.27036018452803406,
+   "published": 0.270360184528034,
+   "delta": 5.551115123125783e-17,
+   "ok": true
+  },
+  {
+   "dataset": "NSL-KDD",
+   "model": "LSTM",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.18781050390347764,
+   "published": 0.1862579843860894,
+   "delta": 0.0015525195173882456,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "Mamba",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 0.9998534207922606,
+   "published": 0.9998534207922606,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "Mamba",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.86357140239657,
+   "published": 0.86357140239657,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "Mamba",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.30620396496756935,
+   "published": 0.3041152112572831,
+   "delta": 0.002088753710286273,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "Transformer",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 1.0,
+   "published": 1.0,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "Transformer",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.9988640111400198,
+   "published": 0.9988640111400198,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "Transformer",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.9996335519806515,
+   "published": 0.9995969071787169,
+   "delta": 3.664480193465991e-05,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "CNN1D",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 0.9996701967825864,
+   "published": 0.9996701967825864,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "CNN1D",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.3616841950969255,
+   "published": 0.3616841950969255,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "CNN1D",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.3912565502583459,
+   "published": 0.3919161566931731,
+   "delta": -0.000659606434827209,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "LSTM",
+   "seed": 13,
+   "quantity": "clean",
+   "reproduced": 0.9992671039613031,
+   "published": 0.9992671039613032,
+   "delta": -1.1102230246251565e-16,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "LSTM",
+   "seed": 13,
+   "quantity": "FGSM@0.1",
+   "reproduced": 0.4054014438051962,
+   "published": 0.4054014438051962,
+   "delta": 0.0,
+   "ok": true
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "model": "LSTM",
+   "seed": 13,
+   "quantity": "PGD@0.1",
+   "reproduced": 0.16710029682289568,
+   "published": 0.1694089193447909,
+   "delta": -0.0023086225218952316,
+   "ok": true
+  }
+ ],
+ "aggregate": {
+  "CNN1D": {
+   "unmasked": 0.657484,
+   "masked": 0.783796,
+   "delta": 0.126311
+  },
+  "LSTM": {
+   "unmasked": 0.49323,
+   "masked": 0.757733,
+   "delta": 0.264502
+  },
+  "Mamba": {
+   "unmasked": 0.643686,
+   "masked": 0.774496,
+   "delta": 0.13081
+  },
+  "Transformer": {
+   "unmasked": 0.869604,
+   "masked": 0.873206,
+   "delta": 0.003603
+  }
+ },
+ "per_cell": [
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "FGSM",
+   "model": "CNN1D",
+   "unmasked": 0.816245,
+   "masked": 0.91049,
+   "delta": 0.094246
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "FGSM",
+   "model": "LSTM",
+   "unmasked": 0.558517,
+   "masked": 0.844566,
+   "delta": 0.286049
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "FGSM",
+   "model": "Mamba",
+   "unmasked": 0.894193,
+   "masked": 0.979126,
+   "delta": 0.084933
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "FGSM",
+   "model": "Transformer",
+   "unmasked": 0.999569,
+   "masked": 0.999666,
+   "delta": 9.6e-05
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "PGD",
+   "model": "CNN1D",
+   "unmasked": 0.772124,
+   "masked": 0.934282,
+   "delta": 0.162158
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "PGD",
+   "model": "LSTM",
+   "unmasked": 0.400093,
+   "masked": 0.815855,
+   "delta": 0.415763
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "PGD",
+   "model": "Mamba",
+   "unmasked": 0.534913,
+   "masked": 0.86643,
+   "delta": 0.331516
+  },
+  {
+   "dataset": "NF-UNSW-NB15",
+   "attack": "PGD",
+   "model": "Transformer",
+   "unmasked": 0.999721,
+   "masked": 0.99973,
+   "delta": 9e-06
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "FGSM",
+   "model": "CNN1D",
+   "unmasked": 0.523659,
+   "masked": 0.639588,
+   "delta": 0.115929
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "FGSM",
+   "model": "LSTM",
+   "unmasked": 0.550152,
+   "masked": 0.697946,
+   "delta": 0.147794
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "FGSM",
+   "model": "Mamba",
+   "unmasked": 0.664029,
+   "masked": 0.670988,
+   "delta": 0.006959
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "FGSM",
+   "model": "Transformer",
+   "unmasked": 0.737258,
+   "masked": 0.744455,
+   "delta": 0.007197
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "PGD",
+   "model": "CNN1D",
+   "unmasked": 0.517909,
+   "masked": 0.650822,
+   "delta": 0.132912
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "PGD",
+   "model": "LSTM",
+   "unmasked": 0.464159,
+   "masked": 0.672563,
+   "delta": 0.208404
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "PGD",
+   "model": "Mamba",
+   "unmasked": 0.481608,
+   "masked": 0.581441,
+   "delta": 0.099833
+  },
+  {
+   "dataset": "NSL-KDD",
+   "attack": "PGD",
+   "model": "Transformer",
+   "unmasked": 0.741866,
+   "masked": 0.748974,
+   "delta": 0.007108
+  }
+ ]
+}

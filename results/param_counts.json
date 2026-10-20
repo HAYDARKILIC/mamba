@@ -1,0 +1,7 @@
+{
+  "Mamba": 201474,
+  "Transformer": 156450,
+  "CNN1D": 23330,
+  "LSTM": 142274,
+  "RandomForest": -1
+}

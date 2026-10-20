@@ -1,0 +1,65 @@
+{
+  "run_id": "20260817_154314",
+  "csv": "/content/drive/MyDrive/Mamba_BTD/datasets/NF-UNSW-NB15/NF-UNSW-NB15-v2.csv",
+  "n_train": 111975,
+  "n_test": 27289,
+  "ablation": {
+    "tum ozellikler": {
+      "dropped": [],
+      "n_features": 41,
+      "accuracy": 0.997618087874235,
+      "macro_f1": 0.9976172815589035,
+      "auc": 0.9989691156693806
+    },
+    "MAX_TTL haric": {
+      "dropped": [
+        "MAX_TTL"
+      ],
+      "n_features": 40,
+      "accuracy": 0.9976547326761699,
+      "macro_f1": 0.9976539419265945,
+      "auc": 0.9987654837654465
+    },
+    "iki TTL de haric": {
+      "dropped": [
+        "MAX_TTL",
+        "MIN_TTL"
+      ],
+      "n_features": 39,
+      "accuracy": 0.9975081534684305,
+      "macro_f1": 0.9975073199938123,
+      "auc": 0.9989925689790883
+    },
+    "TTL + MIN_IP_PKT_LEN haric": {
+      "dropped": [
+        "MAX_TTL",
+        "MIN_TTL",
+        "MIN_IP_PKT_LEN"
+      ],
+      "n_features": 38,
+      "accuracy": 0.9975447982703654,
+      "macro_f1": 0.9975439737568688,
+      "auc": 0.9988560002679949
+    },
+    "_kalan_tek_esik": {
+      "SHORTEST_FLOW_PKT": 0.7962549012422588,
+      "SERVER_TCP_FLAGS": 0.8572684964637766,
+      "DST_TO_SRC_AVG_THROUGHPUT": 0.740444867895489,
+      "TCP_WIN_MAX_OUT": 0.7065117813038221,
+      "OUT_PKTS": 0.7555791710945803,
+      "TCP_FLAGS": 0.7873868591740262,
+      "DST_TO_SRC_SECOND_BYTES": 0.7562754223313423,
+      "OUT_BYTES": 0.7544798270365348,
+      "NUM_PKTS_UP_TO_128_BYTES": 0.7297079409285793,
+      "TCP_WIN_MAX_IN": 0.6821063432152149
+    },
+    "_kalan_en_yuksek": [
+      "SERVER_TCP_FLAGS",
+      0.8572684964637766
+    ],
+    "_taban_cizgisi": 0.510315511744659,
+    "_korpus_uyumlu": true,
+    "_n_kayit": 139264
+  },
+  "latex": "Removing \\texttt{MAX\\_TTL} alone leaves held-out accuracy essentially unchanged at 0.9977, as the redundancy predicts; removing both time-to-live fields leaves it at 0.9975, and removing the three near-deterministic features together leaves it at 0.9975 (macro-$F_{1}$ 0.9975, AUC 0.9989). A residual artefact remains: with those features withheld, \\texttt{SERVER\\_TCP\\_FLAGS} still separates the classes at 0.8573 accuracy under a single threshold, so the corpus is not rendered artefact-free by removing the time-to-live group alone."
+}

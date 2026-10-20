@@ -1,0 +1,100 @@
+{
+  "run_id": "20260817_125829",
+  "status": {
+    "1 — S6 uygulama dogrulamasi": "OK",
+    "2 — Bolme (split) dogrulamasi": "OK",
+    "3 — Sizinti incelemesi (NF-UNSW-NB15)": "OK"
+  },
+  "results": {
+    "check1": 1.862645149230957e-08,
+    "check2": 1.3877787807814457e-17,
+    "check3": true,
+    "splits": {
+      "NSL-KDD": {
+        "strategy": "official",
+        "disjoint": true
+      },
+      "NF-UNSW-NB15": {
+        "strategy": "group",
+        "columns": [
+          "IPV4_SRC_ADDR",
+          "IPV4_DST_ADDR"
+        ],
+        "n_groups": 242,
+        "n_train": 111975,
+        "n_test": 27289,
+        "overlapping_groups": 0,
+        "disjoint": true
+      },
+      "CICIDS2018": {
+        "strategy": "temporal",
+        "column": "Timestamp",
+        "parsed_fraction": 1.0,
+        "n_train": 250918,
+        "n_test": 62730,
+        "chronologically_disjoint": true
+      }
+    },
+    "leakage": {
+      "top_features": {
+        "MAX_TTL": 0.1975954483638681,
+        "MIN_TTL": 0.19266352338737527,
+        "MIN_IP_PKT_LEN": 0.18585007832335065,
+        "SERVER_TCP_FLAGS": 0.07041585573826993,
+        "SHORTEST_FLOW_PKT": 0.061543112040696984,
+        "DST_TO_SRC_AVG_THROUGHPUT": 0.039540442366374426,
+        "TCP_FLAGS": 0.03213096961573738,
+        "NUM_PKTS_UP_TO_128_BYTES": 0.022950938816899483,
+        "OUT_BYTES": 0.02210502451160623,
+        "TCP_WIN_MAX_OUT": 0.02006455552579542
+      },
+      "top1_importance": 0.1975954483638681,
+      "top3_importance": 0.576109050074594,
+      "single_split": {
+        "MAX_TTL": 0.9948227826286765,
+        "MIN_TTL": 0.9948227826286765,
+        "MIN_IP_PKT_LEN": 0.9916345932904411,
+        "SERVER_TCP_FLAGS": 0.8633027918198529,
+        "SHORTEST_FLOW_PKT": 0.7728989545036765,
+        "DST_TO_SRC_AVG_THROUGHPUT": 0.7491526884191176,
+        "TCP_FLAGS": 0.7951444738051471,
+        "NUM_PKTS_UP_TO_128_BYTES": 0.7386043772977942,
+        "OUT_BYTES": 0.7621783088235294,
+        "TCP_WIN_MAX_OUT": 0.6846995634191176
+      },
+      "max_single_feature": "MAX_TTL",
+      "max_single_accuracy": 0.9948227826286765,
+      "leaking": true,
+      "suspect": "MAX_TTL",
+      "acc_with": 1.0,
+      "acc_without": 1.0
+    }
+  },
+  "latex_substitutions": [
+    {
+      "file": "BTD_methodology.tex",
+      "find": "\\PH{CHECK 1 value}",
+      "replace": "$1.86\\times10^{-8}$"
+    },
+    {
+      "file": "BTD_methodology.tex",
+      "find": "\\PH{CHECK 2 value}",
+      "replace": "$1.39\\times10^{-17}$"
+    },
+    {
+      "file": "BTD_results.tex",
+      "find": "\\PH{strategy and disjointness result for NF-UNSW-NB15}",
+      "replace": "a group-aware split on \\texttt{IPV4\\_SRC\\_ADDR} and \\texttt{IPV4\\_DST\\_ADDR} over 242 unique groups, with zero groups shared between the two partitions"
+    },
+    {
+      "file": "BTD_results.tex",
+      "find": "\\PH{strategy and disjointness result for CSE-CIC-IDS2018}",
+      "replace": "a chronological split, with the training and test intervals confirmed disjoint"
+    },
+    {
+      "file": "BTD_discussion.tex",
+      "find": "\\PH{state the top-ranked features and their importance mass, and whether performance survives their removal}",
+      "replace": "the single feature \\texttt{MAX\\_TTL} attains 0.9948 accuracy on its own with a single threshold, and \\texttt{MAX\\_TTL} alone carries 0.198 of the total impurity-based importance mass; removing it changes accuracy from 1.0000 to 1.0000. The corpus therefore contains a feature that very nearly encodes the target, and results obtained on it should be read accordingly"
+    }
+  ]
+}

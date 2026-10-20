@@ -1,0 +1,25 @@
+{
+  "upload_type": "software",
+  "title": "Adversarial Robustness of Mamba-Based Network Intrusion Detection: Code and Results",
+  "description": "<p>Reproducibility artefact for a controlled comparison of a selective state-space (Mamba/S6) intrusion detector against Transformer, one-dimensional convolutional, bidirectional recurrent and Random Forest baselines on NSL-KDD, NF-UNSW-NB15-v2 and CSE-CIC-IDS2018, under white-box (FGSM, PGD) and black-box transfer attacks over seven random seeds.</p><p>Contents: the full experimental pipeline as a notebook; verification notebooks for the S6 implementation, the partitioning and a single-threshold leakage audit; the padding-masked re-evaluation; standalone verification scripts; and every result file behind the reported tables and figures. <code>analysis/reproduce_claims.py</code> recomputes 35 of the paper's headline numbers from the released result files in seconds and requires no GPU and no dataset download.</p><p>The manuscript is not included. Preprocessed tensor caches, model checkpoints and the subsampled corpora are distributed separately because of their size.</p>",
+  "creators": [
+    {
+      "name": "Kilic, Haydar",
+      "affiliation": "Department of Artificial Intelligence Engineering, Ostim Technical University, Ankara, Turkey",
+      "orcid": "0000-0002-2551-3772"
+    }
+  ],
+  "license": "mit",
+  "access_right": "open",
+  "keywords": [
+    "network intrusion detection",
+    "adversarial robustness",
+    "state-space models",
+    "Mamba",
+    "evasion attacks",
+    "FGSM",
+    "PGD",
+    "adversarial training",
+    "reproducibility"
+  ]
+}

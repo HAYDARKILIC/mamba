@@ -1,0 +1,18 @@
+% Otomatik uretildi - BTD makalesi icin yayina-hazir tablo
+\begin{table}[ht]
+\centering
+\caption{Model basina parametre sayisi, tek-ornek (batch=1, gercek-zamanli senaryo) ve toplu-isleme (batch=512) cikarim gecikmesi (ms/ornek) ve verimi (ornek/saniye). GPU olcumleri torch.cuda.Event ile senkronize edilerek yapilmistir.}
+\label{tab:T4_cikarim_verimliligi}
+\begin{tabular}{lrrrrr}
+\toprule
+model & n\_parameters & latency\_ms\_bs1 & throughput\_sps\_bs1 & latency\_ms\_bs512 & throughput\_sps\_bs512 \\
+\midrule
+LSTM & 142274 & 0.5120 & 1953.2031 & 0.0026 & 384500.0378 \\
+CNN1D & 23330 & 0.5328 & 1876.9220 & 0.0011 & 889268.3107 \\
+Transformer & 156450 & 1.2735 & 785.2264 & 0.0036 & 274223.5371 \\
+Mamba & 201474 & 26.2587 & 38.0827 & 0.0526 & 18995.7696 \\
+RandomForest & -1 & 36.8089 & 27.1673 & 0.1160 & 8619.8345 \\
+\bottomrule
+\end{tabular}
+
+\end{table}

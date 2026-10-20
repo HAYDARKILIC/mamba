@@ -1,0 +1,82 @@
+{
+  "run_id": "20260710_193652",
+  "smoke_test": false,
+  "seeds": [
+    13,
+    42,
+    123,
+    777,
+    2024,
+    2025,
+    31415
+  ],
+  "datasets": [
+    "NSL-KDD",
+    "NF-UNSW-NB15",
+    "CICIDS2018"
+  ],
+  "models": [
+    "Mamba",
+    "Transformer",
+    "CNN1D",
+    "LSTM",
+    "RandomForest"
+  ],
+  "batch_size": 512,
+  "epochs": 40,
+  "patience": 6,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.0001,
+  "seq_len": 64,
+  "d_model": 64,
+  "n_layers": 3,
+  "smoke_test_max_rows": 3000,
+  "attacks": {
+    "FGSM": {
+      "eps_list": [
+        0.01,
+        0.03,
+        0.05,
+        0.1
+      ]
+    },
+    "PGD": {
+      "eps_list": [
+        0.01,
+        0.03,
+        0.05,
+        0.1
+      ],
+      "alpha": 0.01,
+      "steps": 10
+    },
+    "BlackBoxTransfer": {
+      "eps_list": [
+        0.03,
+        0.1
+      ]
+    }
+  },
+  "adversarial_training": {
+    "enabled": true,
+    "models": [
+      "Mamba",
+      "CNN1D"
+    ],
+    "eps": 0.05,
+    "mix_ratio": 0.5
+  },
+  "ablation": {
+    "enabled": true,
+    "d_model_values": [
+      32,
+      64
+    ],
+    "seeds": [
+      13,
+      42
+    ]
+  },
+  "email_notifications": true,
+  "data_version": "v3_groupsplit"
+}

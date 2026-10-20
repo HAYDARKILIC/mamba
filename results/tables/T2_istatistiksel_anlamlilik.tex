@@ -1,0 +1,25 @@
+% Otomatik uretildi - BTD makalesi icin yayina-hazir tablo
+\begin{table}[ht]
+\centering
+\caption{Mamba ile en guclu rakip model arasinda esli t-testi ve Wilcoxon isaretli-sira testi sonuclari. p_value: HAM (duzeltilmemis) p-degeri; p_value_holm: coklu-karsilastirma icin Holm-Bonferroni ile DUZELTILMIS p-degeri (aile-capinda hata oranini kontrol eder). Anlamlilik yorumlanirken p_value_holm sutunu ESAS ALINMALIDIR.}
+\label{tab:T2_istatistiksel_anlamlilik}
+\begin{tabular}{lllrrrrrrrr}
+\toprule
+dataset & attack & en\_iyi\_karsilastirma\_modeli & mamba\_ortalama & rakip\_ortalama & t\_stat & p\_value & wilcoxon\_p & p\_value\_holm & anlamli\_ham\_p<0.05 & anlamli\_holm\_p<0.05 \\
+\midrule
+NSL-KDD & clean & LSTM & 0.7747 & 0.7999 & -3.3750 & 0.0149 & 0.0312 & 0.0897 & True & False \\
+NSL-KDD & FGSM & Transformer & 0.6518 & 0.7401 & -5.5751 & 0.0014 & 0.0156 & 0.0127 & True & True \\
+NSL-KDD & PGD & Transformer & 0.4614 & 0.7454 & -21.6022 & 0.0000 & 0.0156 & 0.0000 & True & True \\
+NSL-KDD & BlackBoxTransfer & Transformer & 0.7794 & 0.7829 & -0.7194 & 0.4989 & 0.6875 & 0.9979 & False & False \\
+NF-UNSW-NB15 & clean & Transformer & 0.9999 & 1.0000 & -4.5826 & 0.0038 & 0.0156 & 0.0301 & True & True \\
+NF-UNSW-NB15 & FGSM & Transformer & 0.9219 & 0.9993 & -4.4933 & 0.0041 & 0.0156 & 0.0301 & True & True \\
+NF-UNSW-NB15 & PGD & Transformer & 0.6694 & 0.9995 & -6.7515 & 0.0005 & 0.0156 & 0.0051 & True & True \\
+NF-UNSW-NB15 & BlackBoxTransfer & Transformer & 0.9902 & 0.9999 & -2.2841 & 0.0624 & 0.0156 & 0.2498 & False & False \\
+CICIDS2018 & clean & Transformer & 0.5185 & 0.5655 & -2.0414 & 0.0873 & 0.3750 & 0.2618 & False & False \\
+CICIDS2018 & FGSM & LSTM & 0.4279 & 0.5146 & -2.8343 & 0.0298 & 0.0156 & 0.1490 & True & False \\
+CICIDS2018 & PGD & Transformer & 0.2521 & 0.4893 & -11.3040 & 0.0000 & 0.0156 & 0.0003 & True & True \\
+CICIDS2018 & BlackBoxTransfer & Transformer & 0.5344 & 0.5387 & -0.2780 & 0.7904 & 0.8125 & 0.9979 & False & False \\
+\bottomrule
+\end{tabular}
+
+\end{table}

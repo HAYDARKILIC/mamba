@@ -1,0 +1,133 @@
+% Otomatik uretildi - BTD makalesi icin yayina-hazir tablo
+\begin{table}[ht]
+\centering
+\caption{FGSM-karisik adversarial training savunmasi UYGULANMADAN once (defense=none) ve SONRA (defense=adv_train) elde edilen ortalama dogruluklarin karsilastirmasi. adv_train sutunundaki degerlerin none sutunundan YUKSEK olmasi, savunmanin etkili oldugunu gosterir.}
+\label{tab:T5_savunma_etkinligi}
+\begin{tabular}{llllrrr}
+\toprule
+dataset & model & defense & attack & eps & accuracy\_mean & accuracy\_std \\
+\midrule
+CICIDS2018 & CNN1D & adv\_train & FGSM & 0.0100 & 0.4980 & 0.0057 \\
+CICIDS2018 & CNN1D & adv\_train & FGSM & 0.0300 & 0.4899 & 0.0102 \\
+CICIDS2018 & CNN1D & adv\_train & FGSM & 0.0500 & 0.4823 & 0.0142 \\
+CICIDS2018 & CNN1D & adv\_train & FGSM & 0.1000 & 0.4667 & 0.0287 \\
+CICIDS2018 & CNN1D & adv\_train & PGD & 0.0100 & 0.4972 & 0.0058 \\
+CICIDS2018 & CNN1D & adv\_train & PGD & 0.0300 & 0.4858 & 0.0121 \\
+CICIDS2018 & CNN1D & adv\_train & PGD & 0.0500 & 0.4761 & 0.0197 \\
+CICIDS2018 & CNN1D & adv\_train & PGD & 0.1000 & 0.4473 & 0.0431 \\
+CICIDS2018 & CNN1D & adv\_train & clean & 0.0000 & 0.5017 & 0.0047 \\
+CICIDS2018 & CNN1D & none & BlackBoxTransfer & 0.0300 & 0.5014 & 0.0064 \\
+CICIDS2018 & CNN1D & none & BlackBoxTransfer & 0.1000 & 0.4647 & 0.0490 \\
+CICIDS2018 & CNN1D & none & FGSM & 0.0100 & 0.4422 & 0.0686 \\
+CICIDS2018 & CNN1D & none & FGSM & 0.0300 & 0.2645 & 0.1494 \\
+CICIDS2018 & CNN1D & none & FGSM & 0.0500 & 0.1839 & 0.1557 \\
+CICIDS2018 & CNN1D & none & FGSM & 0.1000 & 0.0608 & 0.0601 \\
+CICIDS2018 & CNN1D & none & PGD & 0.0100 & 0.4413 & 0.0696 \\
+CICIDS2018 & CNN1D & none & PGD & 0.0300 & 0.2455 & 0.1552 \\
+CICIDS2018 & CNN1D & none & PGD & 0.0500 & 0.1463 & 0.1235 \\
+CICIDS2018 & CNN1D & none & PGD & 0.1000 & 0.0607 & 0.0534 \\
+CICIDS2018 & CNN1D & none & clean & 0.0000 & 0.5183 & 0.0345 \\
+CICIDS2018 & Mamba & adv\_train & FGSM & 0.0100 & 0.5168 & 0.0015 \\
+CICIDS2018 & Mamba & adv\_train & FGSM & 0.0300 & 0.5160 & 0.0016 \\
+CICIDS2018 & Mamba & adv\_train & FGSM & 0.0500 & 0.5150 & 0.0014 \\
+CICIDS2018 & Mamba & adv\_train & FGSM & 0.1000 & 0.5073 & 0.0080 \\
+CICIDS2018 & Mamba & adv\_train & PGD & 0.0100 & 0.5168 & 0.0015 \\
+CICIDS2018 & Mamba & adv\_train & PGD & 0.0300 & 0.5159 & 0.0015 \\
+CICIDS2018 & Mamba & adv\_train & PGD & 0.0500 & 0.5146 & 0.0012 \\
+CICIDS2018 & Mamba & adv\_train & PGD & 0.1000 & 0.5049 & 0.0035 \\
+CICIDS2018 & Mamba & adv\_train & clean & 0.0000 & 0.5172 & 0.0016 \\
+CICIDS2018 & Mamba & none & BlackBoxTransfer & 0.0300 & 0.5315 & 0.0438 \\
+CICIDS2018 & Mamba & none & BlackBoxTransfer & 0.1000 & 0.5372 & 0.0412 \\
+CICIDS2018 & Mamba & none & FGSM & 0.0100 & 0.4937 & 0.0103 \\
+CICIDS2018 & Mamba & none & FGSM & 0.0300 & 0.4355 & 0.0583 \\
+CICIDS2018 & Mamba & none & FGSM & 0.0500 & 0.3972 & 0.0769 \\
+CICIDS2018 & Mamba & none & FGSM & 0.1000 & 0.3853 & 0.1220 \\
+CICIDS2018 & Mamba & none & PGD & 0.0100 & 0.4824 & 0.0174 \\
+CICIDS2018 & Mamba & none & PGD & 0.0300 & 0.2822 & 0.0920 \\
+CICIDS2018 & Mamba & none & PGD & 0.0500 & 0.1634 & 0.0713 \\
+CICIDS2018 & Mamba & none & PGD & 0.1000 & 0.0802 & 0.0348 \\
+CICIDS2018 & Mamba & none & clean & 0.0000 & 0.5185 & 0.0023 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & FGSM & 0.0100 & 0.9967 & 0.0014 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & FGSM & 0.0300 & 0.9954 & 0.0028 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & FGSM & 0.0500 & 0.9940 & 0.0038 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & FGSM & 0.1000 & 0.9674 & 0.0429 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & PGD & 0.0100 & 0.9964 & 0.0015 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & PGD & 0.0300 & 0.9937 & 0.0035 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & PGD & 0.0500 & 0.9866 & 0.0097 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & PGD & 0.1000 & 0.9061 & 0.1024 \\
+NF-UNSW-NB15 & CNN1D & adv\_train & clean & 0.0000 & 0.9976 & 0.0006 \\
+NF-UNSW-NB15 & CNN1D & none & BlackBoxTransfer & 0.0300 & 0.9960 & 0.0041 \\
+NF-UNSW-NB15 & CNN1D & none & BlackBoxTransfer & 0.1000 & 0.9612 & 0.0281 \\
+NF-UNSW-NB15 & CNN1D & none & FGSM & 0.0100 & 0.9957 & 0.0036 \\
+NF-UNSW-NB15 & CNN1D & none & FGSM & 0.0300 & 0.9560 & 0.0316 \\
+NF-UNSW-NB15 & CNN1D & none & FGSM & 0.0500 & 0.7193 & 0.1521 \\
+NF-UNSW-NB15 & CNN1D & none & FGSM & 0.1000 & 0.4614 & 0.0479 \\
+NF-UNSW-NB15 & CNN1D & none & PGD & 0.0100 & 0.9954 & 0.0043 \\
+NF-UNSW-NB15 & CNN1D & none & PGD & 0.0300 & 0.9176 & 0.1060 \\
+NF-UNSW-NB15 & CNN1D & none & PGD & 0.0500 & 0.6344 & 0.1008 \\
+NF-UNSW-NB15 & CNN1D & none & PGD & 0.1000 & 0.4543 & 0.0333 \\
+NF-UNSW-NB15 & CNN1D & none & clean & 0.0000 & 0.9977 & 0.0025 \\
+NF-UNSW-NB15 & Mamba & adv\_train & FGSM & 0.0100 & 1.0000 & 0.0001 \\
+NF-UNSW-NB15 & Mamba & adv\_train & FGSM & 0.0300 & 0.9999 & 0.0001 \\
+NF-UNSW-NB15 & Mamba & adv\_train & FGSM & 0.0500 & 0.9999 & 0.0001 \\
+NF-UNSW-NB15 & Mamba & adv\_train & FGSM & 0.1000 & 0.9981 & 0.0027 \\
+NF-UNSW-NB15 & Mamba & adv\_train & PGD & 0.0100 & 1.0000 & 0.0001 \\
+NF-UNSW-NB15 & Mamba & adv\_train & PGD & 0.0300 & 0.9997 & 0.0006 \\
+NF-UNSW-NB15 & Mamba & adv\_train & PGD & 0.0500 & 0.9980 & 0.0051 \\
+NF-UNSW-NB15 & Mamba & adv\_train & PGD & 0.1000 & 0.9789 & 0.0423 \\
+NF-UNSW-NB15 & Mamba & adv\_train & clean & 0.0000 & 1.0000 & 0.0000 \\
+NF-UNSW-NB15 & Mamba & none & BlackBoxTransfer & 0.0300 & 0.9999 & 0.0001 \\
+NF-UNSW-NB15 & Mamba & none & BlackBoxTransfer & 0.1000 & 0.9805 & 0.0226 \\
+NF-UNSW-NB15 & Mamba & none & FGSM & 0.0100 & 0.9994 & 0.0009 \\
+NF-UNSW-NB15 & Mamba & none & FGSM & 0.0300 & 0.9733 & 0.0481 \\
+NF-UNSW-NB15 & Mamba & none & FGSM & 0.0500 & 0.9273 & 0.0564 \\
+NF-UNSW-NB15 & Mamba & none & FGSM & 0.1000 & 0.7877 & 0.1044 \\
+NF-UNSW-NB15 & Mamba & none & PGD & 0.0100 & 0.9991 & 0.0017 \\
+NF-UNSW-NB15 & Mamba & none & PGD & 0.0300 & 0.8583 & 0.2293 \\
+NF-UNSW-NB15 & Mamba & none & PGD & 0.0500 & 0.5645 & 0.2068 \\
+NF-UNSW-NB15 & Mamba & none & PGD & 0.1000 & 0.2559 & 0.0952 \\
+NF-UNSW-NB15 & Mamba & none & clean & 0.0000 & 0.9999 & 0.0001 \\
+NSL-KDD & CNN1D & adv\_train & FGSM & 0.0100 & 0.7573 & 0.0157 \\
+NSL-KDD & CNN1D & adv\_train & FGSM & 0.0300 & 0.7385 & 0.0234 \\
+NSL-KDD & CNN1D & adv\_train & FGSM & 0.0500 & 0.7228 & 0.0348 \\
+NSL-KDD & CNN1D & adv\_train & FGSM & 0.1000 & 0.7033 & 0.0447 \\
+NSL-KDD & CNN1D & adv\_train & PGD & 0.0100 & 0.7514 & 0.0156 \\
+NSL-KDD & CNN1D & adv\_train & PGD & 0.0300 & 0.7181 & 0.0226 \\
+NSL-KDD & CNN1D & adv\_train & PGD & 0.0500 & 0.6953 & 0.0283 \\
+NSL-KDD & CNN1D & adv\_train & PGD & 0.1000 & 0.6560 & 0.0258 \\
+NSL-KDD & CNN1D & adv\_train & clean & 0.0000 & 0.7678 & 0.0128 \\
+NSL-KDD & CNN1D & none & BlackBoxTransfer & 0.0300 & 0.7215 & 0.0307 \\
+NSL-KDD & CNN1D & none & BlackBoxTransfer & 0.1000 & 0.5506 & 0.1581 \\
+NSL-KDD & CNN1D & none & FGSM & 0.0100 & 0.7411 & 0.0330 \\
+NSL-KDD & CNN1D & none & FGSM & 0.0300 & 0.6383 & 0.0361 \\
+NSL-KDD & CNN1D & none & FGSM & 0.0500 & 0.4446 & 0.1303 \\
+NSL-KDD & CNN1D & none & FGSM & 0.1000 & 0.2380 & 0.1712 \\
+NSL-KDD & CNN1D & none & PGD & 0.0100 & 0.7403 & 0.0317 \\
+NSL-KDD & CNN1D & none & PGD & 0.0300 & 0.6274 & 0.0324 \\
+NSL-KDD & CNN1D & none & PGD & 0.0500 & 0.4182 & 0.1140 \\
+NSL-KDD & CNN1D & none & PGD & 0.1000 & 0.2536 & 0.1331 \\
+NSL-KDD & CNN1D & none & clean & 0.0000 & 0.7808 & 0.0200 \\
+NSL-KDD & Mamba & adv\_train & FGSM & 0.0100 & 0.7723 & 0.0123 \\
+NSL-KDD & Mamba & adv\_train & FGSM & 0.0300 & 0.7585 & 0.0130 \\
+NSL-KDD & Mamba & adv\_train & FGSM & 0.0500 & 0.7471 & 0.0143 \\
+NSL-KDD & Mamba & adv\_train & FGSM & 0.1000 & 0.7230 & 0.0139 \\
+NSL-KDD & Mamba & adv\_train & PGD & 0.0100 & 0.7723 & 0.0123 \\
+NSL-KDD & Mamba & adv\_train & PGD & 0.0300 & 0.7577 & 0.0131 \\
+NSL-KDD & Mamba & adv\_train & PGD & 0.0500 & 0.7445 & 0.0145 \\
+NSL-KDD & Mamba & adv\_train & PGD & 0.1000 & 0.7225 & 0.0134 \\
+NSL-KDD & Mamba & adv\_train & clean & 0.0000 & 0.7799 & 0.0133 \\
+NSL-KDD & Mamba & none & BlackBoxTransfer & 0.0300 & 0.7725 & 0.0127 \\
+NSL-KDD & Mamba & none & BlackBoxTransfer & 0.1000 & 0.7863 & 0.0201 \\
+NSL-KDD & Mamba & none & FGSM & 0.0100 & 0.7398 & 0.0142 \\
+NSL-KDD & Mamba & none & FGSM & 0.0300 & 0.6702 & 0.0194 \\
+NSL-KDD & Mamba & none & FGSM & 0.0500 & 0.6322 & 0.0710 \\
+NSL-KDD & Mamba & none & FGSM & 0.1000 & 0.5650 & 0.0822 \\
+NSL-KDD & Mamba & none & PGD & 0.0100 & 0.7373 & 0.0137 \\
+NSL-KDD & Mamba & none & PGD & 0.0300 & 0.5143 & 0.0918 \\
+NSL-KDD & Mamba & none & PGD & 0.0500 & 0.3355 & 0.0738 \\
+NSL-KDD & Mamba & none & PGD & 0.1000 & 0.2587 & 0.0409 \\
+NSL-KDD & Mamba & none & clean & 0.0000 & 0.7747 & 0.0134 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
