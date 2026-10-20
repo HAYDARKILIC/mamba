@@ -276,7 +276,7 @@ only the former is immutable:
 
 ```
 Kilic, H. Adversarial Robustness of Mamba-Based Network Intrusion Detection:
-Code and Results. Zenodo. https://doi.org/10.5281/zenodo.XXXXXXX
+Code and Results. Zenodo. https://doi.org/10.5281/zenodo.23497561
 ```
 
 `CITATION.cff` carries the same metadata in machine-readable form, and
