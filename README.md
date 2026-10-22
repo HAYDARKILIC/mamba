@@ -58,6 +58,9 @@ Turkish.
 │   │                              against the published copies
 │   ├── gen_tables.py              Regenerate the LaTeX tables
 │   └── make_figures.py            Regenerate the figures
+├── supplementary/                 The material the paper refers to as
+│   ├── supplementary.tex          released with the artefact: the omitted
+│   └── supplementary.pdf          derivations, pseudo-code and extended analyses
 ├── published/                     The exact tables and figures used in the paper
 │   ├── figures/                   20 vector PDFs
 │   ├── figures_png/               the same figures as PNG, for browsing on GitHub
@@ -68,19 +71,38 @@ Turkish.
 │   ├── ablation_results.csv       Capacity ablation
 │   ├── e3_padding_mask.{json,csv,tex}  Padding-masked re-evaluation
 │   ├── param_counts.json          Trainable parameters per architecture
-│   ├── tables/                    Aggregated tables T1-T6 (csv, md, tex)
-│   ├── logs/                      Run configuration, data-validation log
-│   └── verification/              S6 validation, split and TTL-ablation output
+│   ├── tables/                    T1-T6 and the post-hoc T2b (csv, md, tex)
+│   ├── logs/                      Run configuration and the run's report
+│   ├── verification/              S6 validation, split and TTL-ablation output
+│   └── superseded/                Pre-correction frame of the first execution
+│                                  and its run report; source of no published
+│                                  figure (see its README)
 ├── .gitattributes                 Pins LF line endings on all platforms
 ├── CITATION.cff                   Citation metadata
 ├── .zenodo.json                   Zenodo deposition metadata
 └── requirements.txt
 ```
 
-Everything the paper reports is therefore present in one of three forms: the
+Everything the paper reports is therefore present in one of four forms: the
 raw per-run records (`results/*.csv`), the aggregated tables
-(`results/tables/`), and the rendered artefacts as they appear in the
-manuscript (`published/`).
+(`results/tables/`), the rendered artefacts as they appear in the
+manuscript (`published/`), and the prose and derivations the paper omits
+for length (`supplementary/`). The paper is held to its journal's
+fifteen-page limit, so its methodology section cites derivations rather
+than restating them and several analyses are reported in summary; the
+supplement carries both in full, with the result file behind every
+quantity named in place.
+
+The supplement's sections are cited in the paper as S1-S10, so a pointer in
+the paper resolves to a section of `supplementary/supplementary.pdf` without
+further lookup.
+
+One frame in `results/superseded/` is deliberately not part of that set.
+It records the first execution of the grid, in which the `Attack` column of
+NF-UNSW-NB15-v2 leaked the label into the feature matrix. No published
+number comes from it. It is kept so that the paper's claim about how that
+defect imitated a gradient-masking signature can be checked against data
+rather than taken on trust.
 
 Not included in this repository, by size: preprocessed tensor caches
 (162 MB), model checkpoints (234 MB) and the corpus files actually processed
@@ -108,12 +130,12 @@ pip install -r requirements.txt
 python analysis/reproduce_claims.py
 ```
 
-Recomputes 27 headline claims from `results/` and prints computed value
+Recomputes 58 headline claims from `results/` and prints computed value
 against value as printed in the manuscript. Exit status is non-zero if any
 row reads `MISMATCH`. Expected output ends with:
 
 ```
-35 claims checked, 0 mismatch(es).
+58 claims checked, 0 mismatch(es).
 ```
 
 The published tables and figures are committed under `published/`, so they
@@ -125,12 +147,14 @@ python analysis/check_published_artifacts.py
 ```
 
 This regenerates everything from `results/` and diffs it against
-`published/`. LaTeX table bodies are compared byte-for-byte; figures are
+`published/`. The figure comparison additionally needs `pdftotext` and
+`pdftoppm` from poppler-utils, which pip cannot install; without them the
+figures report `SKIP` and only the table comparison runs. LaTeX table bodies are compared byte-for-byte; figures are
 compared on extracted content, since PDF writers stamp a fresh timestamp and
 document ID on every run. Expected output ends with:
 
 ```
-29 artefacts checked, 0 not reproduced.
+29 artefacts checked. Table bodies: 0 not reproduced. Figures: 0 flagged for review.
 ```
 
 To regenerate without diffing:
@@ -225,9 +249,15 @@ result.
 
 ## Environment
 
-Experiments were run on Google Colab with a single NVIDIA A100-SXM4-80 GB.
-Exact library versions are recorded in `results/logs/config.json` and in the
-first cell's output of the main notebook.
+Experiments were run on Google Colab. The first execution of the grid used
+an NVIDIA A100-SXM4-80 GB; the corrected NF-UNSW-NB15 execution and the
+padding-masked re-evaluation used an A100-SXM4-40 GB. Each run's device is
+recorded in its own report (`results/logs/final_report.md` and
+`results/superseded/final_report_20260710_193652.md`) and, for the
+padding-mask arm, in `results/e3_padding_mask.json`. `results/logs/config.json`
+records the resolved run configuration; exact library versions are not
+serialised there and appear only in the first cell's output of the main
+notebook.
 
 ```
 python >= 3.10

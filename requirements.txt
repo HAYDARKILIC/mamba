@@ -12,3 +12,10 @@ einops>=0.7
 # Optional: only used by one validation check. The check falls back to
 # extracting the reference function from source if this cannot be built.
 # mamba-ssm>=1.2
+
+# System dependency (not pip-installable): analysis/check_published_artifacts.py
+# calls `pdftotext` and `pdftoppm` from poppler-utils to compare the published
+# figures. Without them the figure comparison reports SKIP; the table
+# comparison, which gates the exit status, is unaffected.
+#   Debian/Ubuntu: apt-get install poppler-utils
+#   macOS:         brew install poppler

@@ -1,0 +1,995 @@
+%=====================================================================
+%  SUPPLEMENTARY MATERIAL
+%  Threat-Model Dependence in the Adversarial Robustness of
+%  Mamba-Based Network Intrusion Detection
+%
+%  This document holds the material the main paper refers to as
+%  released with the archived artefact: the derivations and
+%  pseudo-code omitted from Section 3, the extended scope statement
+%  omitted from Section 4, and the extended leakage, padding-mask,
+%  severity, defence-verification, threat-model and capacity analyses
+%  omitted from Section 5.
+%
+%  Every quantity below is reproduced from the released result files;
+%  no value is transcribed by hand.  The provenance of each is named
+%  in the text.
+%=====================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{mathptmx}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[font=small,labelsep=period,labelfont=bf]{caption}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{url}
+\usepackage[hyphens]{xurl}
+\sloppy
+\emergencystretch=2em
+\usepackage[hidelinks,breaklinks]{hyperref}
+\SetAlgorithmName{Algorithm}{Algorithm}{List of Algorithms}
+\SetKwInput{KwData}{Input}
+\SetKwInput{KwResult}{Output}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Ind}{\mathbb{1}}
+\newcommand{\vx}{\bm{x}}
+\newcommand{\vy}{\bm{y}}
+\newcommand{\vh}{\bm{h}}
+\newcommand{\vu}{\bm{u}}
+\newcommand{\vz}{\bm{z}}
+\newcommand{\vdelta}{\bm{\delta}}
+\newcommand{\vtheta}{\bm{\theta}}
+\newcommand{\mA}{\bm{A}}
+\newcommand{\mB}{\bm{B}}
+\newcommand{\mC}{\bm{C}}
+\newcommand{\mD}{\bm{D}}
+\newcommand{\Abar}{\overline{\bm{A}}}
+\newcommand{\Bbar}{\overline{\bm{B}}}
+\newcommand{\Dset}{\mathcal{D}}
+\newcommand{\Xset}{\mathcal{X}}
+\newcommand{\Sset}{\mathcal{S}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\softplus}{softplus}
+\DeclareMathOperator{\SiLU}{SiLU}
+\DeclareMathOperator{\LN}{LayerNorm}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\clip}{clip}
+\DeclareMathOperator{\Proj}{\Pi}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\title{Supplementary Material\\[2pt]
+\large Threat-Model Dependence in the Adversarial Robustness of
+Mamba-Based Network Intrusion Detection}
+\author{Haydar Kilic\\[2pt]
+\normalsize Department of Artificial Intelligence Engineering,
+Ostim Technical University, Ankara, Turkey\\
+\normalsize \texttt{haydar.kilic@ostimteknik.edu.tr}}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-2.5em}
+
+\noindent
+This document holds the material the main paper refers to as released
+with the archived artefact. Section~\ref{sup:deriv} gives the
+derivations and definitions omitted from the paper's methodology
+section and Section~\ref{sup:algo} the two pseudo-code listings;
+Section~\ref{sup:scope} extends the statement of scope;
+Sections~\ref{sup:leak}--\ref{sup:capacity} give in full the analyses
+the paper reports only in summary. Every quantity is reproduced from
+the result files deposited with the artefact, and the file each comes
+from is named where it is used. Section~\ref{sup:index} indexes the
+deposited tables and figures.
+
+\medskip\noindent
+The main paper cites the sections of this document as S1--S10. Code,
+result frames and this document are archived together at
+\url{https://doi.org/10.5281/zenodo.23497561} (concept identifier;
+release v2.0.1); the corpus subsamples are in the companion record
+\url{https://doi.org/10.5281/zenodo.23499680}. This document is not
+self-contained and is to be read with the paper.
+
+\tableofcontents
+
+%=====================================================================
+\section{Derivations and definitions omitted from the paper}
+\label{sup:deriv}
+
+\subsection{Class-weighted empirical risk}
+
+Operational NIDS traffic is dominated by benign records, and an
+unweighted empirical risk admits a minimiser that predicts the majority
+class unconditionally. The detector parameters are therefore estimated
+by minimising the class-weighted risk
+\begin{equation}
+\vtheta^{\star}
+=\argmin_{\vtheta}\;
+\frac{1}{|\Dset|}\sum_{i=1}^{|\Dset|} w_{y^{(i)}}\,
+\ell\bigl(f_{\vtheta}(\vx^{(i)}),\,y^{(i)}\bigr),
+\label{eq:erm}
+\end{equation}
+with $\ell$ the categorical cross-entropy and the weights the
+inverse-frequency coefficients
+\begin{equation}
+w_{k}=\frac{|\Dset|}{K\,n_{k}},\qquad
+n_{k}=\sum_{i=1}^{|\Dset|}\Ind\bigl[y^{(i)}=k\bigr],\quad K=2 .
+\label{eq:weights}
+\end{equation}
+Equation~(\ref{eq:weights}) is the exact analogue of the balanced
+class-weight convention adopted for the Random Forest baseline, so the
+imbalance correction is identical across the deep and non-deep arms of
+the comparison. The predictive distribution and decision rule are
+\begin{equation}
+p_{\vtheta}(y\mid\vx)=\softmax\bigl(f_{\vtheta}(\vx)\bigr),
+\qquad
+\hat{y}(\vx)=\argmax_{k\in\{0,1\}} \; f_{\vtheta}(\vx)_{k}.
+\label{eq:decision}
+\end{equation}
+
+\subsection{Standardisation and the projection operator}
+
+Continuous features are standardised with statistics estimated
+exclusively on the training partition and applied unchanged to the test
+partition,
+\begin{equation}
+\tilde{x}_{j}=\frac{x_{j}-\mu_{j}^{\mathrm{tr}}}
+{\sigma_{j}^{\mathrm{tr}}+\epsilon},\qquad \epsilon=10^{-8},
+\label{eq:standardise}
+\end{equation}
+and the Euclidean projection onto the feasible set of the paper's
+Equation~(1) is applied component-wise,
+\begin{equation}
+\Proj_{\Sset_{\varepsilon}(\vx)}(\vz)=
+\clip\Bigl(\vx+\clip(\vz-\vx,\,-\varepsilon,\,\varepsilon),\;l,\;u\Bigr),
+\label{eq:proj}
+\end{equation}
+where $l=\min_{\Dset_{\mathrm{tr}}}\vx$ and
+$u=\max_{\Dset_{\mathrm{tr}}}\vx$ are the empirical bounds of the
+training distribution in standardised feature space.
+
+\subsection{Continuous-time formulation and zero-order-hold discretisation}
+
+A linear time-invariant state-space model maps a scalar input $u(t)$ to
+an output $y(t)$ through a latent state $\vh(t)\in\R^{N}$:
+\begin{equation}
+\frac{\mathrm{d}\vh(t)}{\mathrm{d}t}=\mA\vh(t)+\mB u(t),
+\qquad
+y(t)=\mC\vh(t)+D\,u(t),
+\label{eq:ssm-cont}
+\end{equation}
+with $\mA\in\R^{N\times N}$, $\mB\in\R^{N\times1}$,
+$\mC\in\R^{1\times N}$ and a skip coefficient $D\in\R$. Discretising
+(\ref{eq:ssm-cont}) with a zero-order hold over a step size $\Delta>0$
+yields
+\begin{align}
+\vh_{t}&=\Abar\vh_{t-1}+\Bbar u_{t}, \label{eq:ssm-disc-h}\\
+y_{t}&=\mC\vh_{t}+D\,u_{t}, \label{eq:ssm-disc-y}
+\end{align}
+where, following the reference formulation of Gu and Dao with a
+diagonal $\mA$,
+\begin{equation}
+\Abar=\exp(\Delta\mA),
+\qquad
+\Bbar=\Delta\mB.
+\label{eq:zoh}
+\end{equation}
+The expression for $\Bbar$ is the first-order term of the exact
+zero-order-hold coefficient
+$(\Delta\mA)^{-1}\bigl(\exp(\Delta\mA)-\bm{I}\bigr)\Delta\mB$, whose
+expansion is $\Delta\mB+O(\Delta^{2})$; the truncation is adopted for
+numerical stability and for consistency with the reference
+implementation. The state matrix is parameterised as
+\begin{equation}
+\mA=-\exp(\mA_{\log}),\qquad
+\mA_{\log}\in\R^{d_{\mathrm{inner}}\times N},
+\label{eq:Alog}
+\end{equation}
+so that every entry of $\mA$ is strictly negative and, since
+$\Delta>0$, every entry of $\Abar$ lies in $(0,1)$: the recurrence is
+contractive, which precludes the exploding-state pathology of naive
+recurrent parameterisations. Under the S4D-real initialisation the
+$n$-th diagonal entry is set to $\mA_{\log}=\log n$ for
+$n=1,\dots,N$, giving $\mA\in\{-1,\dots,-N\}$; this is the sequence the
+source writes as $A_{n}=-(n+1)$ under zero-based indexing. With $N=16$
+the resulting decay rates span a sixteenfold range, so the state
+channels integrate the input over time-scales differing by more than an
+order of magnitude.
+
+\subsection{The selective projection and the block dimensions}
+
+The selective parameters are obtained by a single projection of the
+internal representation $\vu_{t}\in\R^{d_{\mathrm{inner}}}$:
+\begin{equation}
+\bigl[\tilde{\vdelta}_{t},\,\mB_{t},\,\mC_{t}\bigr]
+=\bm{W}_{x}\vu_{t},
+\label{eq:selproj}
+\end{equation}
+whose three blocks have widths $d_{\mathrm{inner}}$, $N$ and $N$
+respectively, so that
+$\tilde{\vdelta}_{t}\in\R^{d_{\mathrm{inner}}}$,
+$\mB_{t},\mC_{t}\in\R^{N}$ and
+$\bm{W}_{x}\in\R^{(d_{\mathrm{inner}}+2N)\times d_{\mathrm{inner}}}$,
+with
+$\bm{W}_{\Delta}\in\R^{d_{\mathrm{inner}}\times d_{\mathrm{inner}}}$.
+In the block equations of the paper the affine maps
+$\bm{W}_{\mathrm{in}}\in\R^{2d_{\mathrm{inner}}\times d_{\mathrm{model}}}$
+and $\bm{W}_{\mathrm{out}}$ are applied row-wise, that is,
+independently at each step, whereas the depth-wise causal convolution
+and the selective scan act along the sequence axis; the gating endows
+the block with a multiplicative input-dependent pathway and the
+residual is post-normalised, the normalisation being applied after the
+residual is added.
+
+\subsection{Detector head}
+
+The detector embeds the univariate pseudo-sequence, adds a learned
+positional embedding $\bm{P}\in\R^{L\times d_{\mathrm{model}}}$
+initialised from a truncated normal distribution with $\sigma=0.02$,
+applies $K=3$ stacked blocks, mean-pools over the sequence axis and
+classifies:
+\begin{align}
+\vh^{(0)}&=\vx\bm{W}_{e}+\bm{P},\qquad
+\bm{W}_{e}\in\R^{1\times d_{\mathrm{model}}},\\
+\vh^{(k)}&=\mathrm{S6Block}_{k}\bigl(\vh^{(k-1)}\bigr),
+\quad k=1,\dots,K,\\
+\bar{\vh}&=\frac{1}{L}\sum_{t=1}^{L}\vh^{(K)}_{t},\\
+f_{\vtheta}(\vx)&=\bm{W}_{2}\,\mathrm{GELU}
+\bigl(\bm{W}_{1}\LN(\bar{\vh})\bigr),
+\end{align}
+with
+$\bm{W}_{1}\in\R^{(d_{\mathrm{model}}/2)\times d_{\mathrm{model}}}$
+and $\bm{W}_{2}\in\R^{2\times(d_{\mathrm{model}}/2)}$.
+
+\subsection{Closed-form evaluation used in the second validation check}
+
+For diagonal $\mA$ the time-varying recurrence admits the closed form
+\begin{equation}
+\vh_{t}=\sum_{s=1}^{t}
+\Bigl(\textstyle\prod_{r=s+1}^{t}\Abar_{r}\Bigr)
+\odot\Bbar_{s}\otimes\vu_{s},
+\label{eq:closedform}
+\end{equation}
+in which the empty product at $s=t$ is the identity. Because
+$\Abar_{r}=\exp(\Delta_{r}\otimes\mA)$, the product
+in~(\ref{eq:closedform}) is evaluated without a recurrence as
+$\exp(\bm{S}_{t}-\bm{S}_{s})$, where
+$\bm{S}_{t}=\sum_{r\le t}\Delta_{r}\otimes\mA$ is a cumulative sum in
+log space; since $\mA\le 0$ and $\Delta_{r}>0$, every such factor lies
+in $(0,1]$ and the evaluation is numerically stable. This is the
+reference against which the sequential loop is compared in the paper's
+second validation check, which reports a maximum deviation of
+$1.39\times10^{-17}$ in double precision
+(\texttt{results/verification/verification.json}, field
+\texttt{check2}~$=1.3877787807814457\times10^{-17}$).
+
+\subsection{Optimisation schedule}
+
+The learning rate is annealed by a cosine schedule stepped once per
+epoch,
+\begin{equation}
+\eta_{e}=\tfrac{1}{2}\eta_{0}
+\Bigl(1+\cos\bigl(\pi e/N_{\mathrm{ep}}\bigr)\Bigr),
+\qquad N_{\mathrm{ep}}=40,
+\label{eq:cosine}
+\end{equation}
+the epoch budget being written $N_{\mathrm{ep}}$ to avoid collision
+with the expansion factor $E$.
+
+Model selection and early stopping are governed by the balanced
+accuracy on the validation split, which the paper states in words and
+which is
+\begin{equation}
+\mathrm{BA}=\frac{1}{K}\sum_{k=1}^{K}
+\frac{\sum_{i}\Ind[\hat{y}^{(i)}=k]\,\Ind[y^{(i)}=k]}
+{\sum_{i}\Ind[y^{(i)}=k]},
+\qquad K=2,
+\label{eq:balacc}
+\end{equation}
+the unweighted mean of the per-class recalls. It is used in place of
+raw accuracy because a degenerate majority-class predictor attains a
+raw accuracy equal to the majority prior while attaining
+$\mathrm{BA}=0.5$, and because it is the quantity the class weights of
+Equation~(\ref{eq:weights}) make the training objective an analogue of,
+so selection and optimisation target the same criterion.
+
+\subsection{Per-category detection rates}
+
+For every attack category $k$ with at least five test instances the
+clean and adversarial detection rates are
+\begin{align}
+D_{k}^{\mathrm{clean}}&=\frac{1}{|I_{k}|}\sum_{i\in I_{k}}
+\Ind\bigl[\hat{y}(\vx_{i})=1\bigr],
+\label{eq:detrate-clean}\\
+D_{k}^{\mathrm{adv}}&=\frac{1}{|I_{k}|}\sum_{i\in I_{k}}
+\Ind\bigl[\hat{y}(\vx^{\mathrm{adv}}_{i})=1\bigr],
+\label{eq:detrate-adv}
+\end{align}
+where $I_{k}=\{i: y_{i}=1,\,c_{i}=k\}$, and the evasion success rate of
+the paper's Equation~(16) is their difference. The analogous
+quantities for the two binary classes are computed by the same
+procedure and are released with the artefact rather than tabulated,
+since the category-level decomposition subsumes them for the malicious
+class.
+
+\subsection{Latency and throughput}
+
+Per-sample latency and throughput follow from the measured per-batch
+wall-clock time $\bar{\lambda}_{\mathrm{batch}}$ in milliseconds at
+batch size $b$ as
+\begin{equation}
+\lambda_{\mathrm{sample}}=\frac{\bar{\lambda}_{\mathrm{batch}}}{b},
+\qquad
+\mathrm{TP}=\frac{1000\,b}{\bar{\lambda}_{\mathrm{batch}}} .
+\label{eq:latency}
+\end{equation}
+Measurement uses CUDA events with explicit device synchronisation after
+$20$ warm-up iterations over $100$ timed repetitions. The Random Forest
+baseline executes on CPU and is timed with a host-side clock over a
+reduced schedule of five warm-up and twenty timed iterations, so its
+figures are reported for reference only.
+
+\subsection{Paired testing and the Holm--Bonferroni correction}
+
+Because the seed is shared between the proposed model and its
+comparator, the comparison is paired, and the parametric statistic is
+\begin{equation}
+t=\frac{\bar{d}}{s_{d}/\sqrt{S}},
+\qquad
+d_{s}=a_{s}^{\mathrm{Mamba}}-a_{s}^{\mathrm{comp}},
+\label{eq:ttest}
+\end{equation}
+over $S=7$ seeds. Since one hypothesis is tested per (dataset, attack)
+cell, the family-wise error rate over the resulting family of twelve is
+controlled by the Holm--Bonferroni step-down procedure: with ordered
+raw $p$-values $p_{(1)}\le\dots\le p_{(m)}$, the adjusted values are
+\begin{equation}
+\tilde{p}_{(j)}=\max_{i\le j}\;
+\min\bigl\{1,\;(m-i+1)\,p_{(i)}\bigr\},
+\label{eq:holm}
+\end{equation}
+and $H_{(j)}$ is rejected iff $\tilde{p}_{(j)}\le\alpha=0.05$. The two
+conventions the paper describes differ only in the choice of
+comparator; the adjusted values therefore differ between them even
+where the raw $p$-value is identical, because the correction is applied
+within each family separately. The clearest instance is NF-UNSW-NB15
+under transfer, where the raw $p$-value of $0.0223$ becomes
+$\tilde{p}=0.1558$ in the pre-specified family and $\tilde{p}=0.1113$
+in the post-hoc family
+(\texttt{results/tables/T2\_istatistiksel\_anlamlilik.csv} and
+\texttt{T2b\_istatistiksel\_anlamlilik\_posthoc.csv}). Every
+significance claim in the paper is made with respect to the
+pre-specified family.
+
+%=====================================================================
+\section{Pseudo-code}
+\label{sup:algo}
+
+\begin{algorithm}[H]
+\small
+\caption{Leakage-aware partitioning. The strongest guarantee supported
+by the metadata present in a given corpus is selected: a group split
+when flow or endpoint identifiers exist, a chronological split when a
+parsable timestamp exists, and a stratified random split only as a last
+resort, in which case a leakage caveat is written to the run log.}
+\label{alg:split}
+\KwData{Records $\Dset$; candidate group columns $G$; timestamp column
+$\tau$; test fraction $\rho_{\mathrm{te}}=0.2$; fixed split seed
+$s=42$, shared by all experimental seeds}
+\KwResult{Partition assignment $\pi\in\{\text{train},\text{test}\}^{N}$}
+\BlankLine
+$G^{\ast}\leftarrow$ columns of $G$ present in $\Dset$\;
+\uIf{$G^{\ast}\neq\emptyset$}{
+  $k\leftarrow$ composite key from the first two columns of $G^{\ast}$\;
+  \If{$|\mathrm{unique}(k)|\ge 10$}{
+    $\pi\leftarrow\textsc{GroupShuffleSplit}(\Dset,k,\rho_{\mathrm{te}},s)$\;
+    \Return $\pi$ \tcp*{no group spans both partitions}
+  }
+}
+\uIf{$\tau$ present \textbf{and} $\ge 90\%$ of $\tau$ parses}{
+  sort indices by $\tau$ (stable)\;
+  assign the latest $\lceil\rho_{\mathrm{te}}N\rceil$ records to \textit{test}\;
+  \Return $\pi$ \tcp*{chronological hold-out}
+}
+$\pi\leftarrow\textsc{StratifiedSplit}(\Dset,y,\rho_{\mathrm{te}},s)$\;
+record an explicit leakage caveat in the run log\;
+\Return $\pi$\;
+\end{algorithm}
+
+\begin{algorithm}[H]
+\small
+\caption{Selective scan (S6) forward pass for one block. $B$ is the
+batch size, $L$ the sequence length, $N$ the state dimension and
+$d_{\mathrm{inner}}=E\,d_{\mathrm{model}}$ the expanded channel width.
+$\odot$ is the Hadamard product and $\otimes$ broadcasts along the
+state dimension. Lines~7--10 realise the time-varying recurrence as an
+explicit loop.}
+\label{alg:s6}
+\KwData{$\vx\in\R^{B\times L\times d_{\mathrm{model}}}$;
+parameters $\bm{W}_{\mathrm{in}},\bm{W}_{x},\bm{W}_{\Delta},
+\bm{W}_{\mathrm{out}},\mA_{\log},\mD$, the depth-wise convolution
+kernel $\bm{K}\in\R^{d_{\mathrm{inner}}\times k}$ and the
+$\LN$ scale and shift}
+\KwResult{$\mathrm{out}\in\R^{B\times L\times d_{\mathrm{model}}}$}
+\BlankLine
+$[\vu',\vz]\leftarrow\bm{W}_{\mathrm{in}}\vx$\;
+$\vu\leftarrow\SiLU\bigl(\mathrm{DWConv}_{k=4}(\vu')[:,{:}L]\bigr)$
+\tcp*{causal}
+$[\tilde{\vdelta},\mB,\mC]\leftarrow\bm{W}_{x}\vu$\;
+$\Delta\leftarrow\softplus(\bm{W}_{\Delta}\tilde{\vdelta})$;\quad
+$\mA\leftarrow-\exp(\mA_{\log})$\;
+$\Abar\leftarrow\exp(\Delta\otimes\mA)$;\quad
+$\Bbar\leftarrow\Delta\otimes\mB$\;
+$\vh\leftarrow\bm{0}\in\R^{B\times d_{\mathrm{inner}}\times N}$\;
+\For{$t\leftarrow1$ \KwTo $L$}{
+  $\vh\leftarrow\Abar_{:,t}\odot\vh+\Bbar_{:,t}\otimes\vu_{:,t}$\;
+  $\vy_{t}\leftarrow\sum_{n=1}^{N}\vh_{:,:,n}\,\mC_{:,t,n}$\;
+}
+$\vy\leftarrow\mathrm{stack}(\vy_{1},\dots,\vy_{L})+\mD\odot\vu$\;
+$\vy\leftarrow\vy\odot\SiLU(\vz)$\;
+\Return $\LN(\bm{W}_{\mathrm{out}}\vy+\vx)$\;
+\end{algorithm}
+
+%=====================================================================
+\section{Extended statement of scope}
+\label{sup:scope}
+
+The complete experimental grid comprises three datasets, five
+architectures, seven random seeds and ten attack settings (FGSM and PGD
+at $\varepsilon\in\{0.01,0.03,0.05,0.1\}$ and black-box transfer at
+$\varepsilon\in\{0.03,0.1\}$). Because the Random Forest is excluded
+from all ten by construction, the master frame holds $945$ evaluation
+records rather than the $1{,}155$ of a full product: $105$ clean cells
+over five architectures and $840$ attacked cells over the four
+differentiable ones.
+
+The official NSL-KDD files were re-counted directly to confirm the
+protocol statement the paper makes about them: \texttt{KDDTrain+} holds
+$125{,}973$ records carrying $23$ distinct labels and
+\texttt{KDDTest+} holds $22{,}544$ records carrying $38$, of which $17$
+labels occur in the test file and in no training record. Those $17$ are
+\texttt{apache2}, \texttt{httptunnel}, \texttt{mailbomb},
+\texttt{mscan}, \texttt{named}, \texttt{processtable}, \texttt{ps},
+\texttt{saint}, \texttt{sendmail}, \texttt{snmpgetattack},
+\texttt{snmpguess}, \texttt{sqlattack}, \texttt{udpstorm},
+\texttt{worm}, \texttt{xlock}, \texttt{xsnoop} and \texttt{xterm},
+and they account for $3{,}750$ test records, $16.63\%$ of the
+partition. The difference $38-23$ does not give $17$ because two
+training labels (\texttt{spy} and \texttt{warezclient}) are absent from
+the test file; the count of unseen types is therefore a set difference
+and not a subtraction of cardinalities.
+
+After sanitisation and tensorisation the three corpora comprise
+$125{,}973$/$22{,}544$ (NSL-KDD, official split),
+$111{,}975$/$27{,}289$ (NF-UNSW-NB15) and $250{,}143$/$62{,}370$
+(CSE-CIC-IDS2018) training/test records, with malicious proportions of
+$0.465$/$0.569$, $0.503$/$0.490$ and $0.529$/$0.500$. The record counts
+written by the split verification
+(\texttt{results/verification/verification.json}) precede the
+sanitisation stage, which removes the non-finite rows: for
+CSE-CIC-IDS2018 that file reports $250{,}918$/$62{,}730$, which
+sanitisation reduces to the $250{,}143$/$62{,}370$ above.
+
+The native feature dimensionalities are $41$, $41$ and $79$, so the
+fixed pseudo-sequence length $L=64$ entails zero-padding of the
+trailing $23$ coordinates, $35.94\%$ of the sequence, for the first two
+corpora and the truncation of $15$ trailing attributes for
+CSE-CIC-IDS2018. The automated health audit reported no residual
+NaN/Inf entries in any partition and identified $24$, $23$ and $8$
+near-zero-variance features respectively. These counts are largely an
+artefact of the pseudo-sequence construction rather than of the
+underlying telemetry: for NF-UNSW-NB15 all $23$ are padded positions,
+and for NSL-KDD $23$ of the $24$ are, the remaining one being a single
+genuinely constant input attribute. CSE-CIC-IDS2018 is truncated rather
+than padded and therefore contributes no padded positions at all, so
+all $8$ of the columns flagged on that corpus are attributes that are
+genuinely constant across its training partition.
+
+Counting a category as analysable when at least five instances survive
+in the test partition retained four categories for NSL-KDD (DoS, Probe,
+R2L, U2R), nine for NF-UNSW-NB15 and two for CSE-CIC-IDS2018 (Bot and
+Infiltration, the latter spelled \texttt{Infilteration} in the released
+label column). The last of these three counts is a consequence of the
+partitioning rather than of the corpus: the file carries fourteen
+distinct attack labels, but the chronological cut distributes them
+almost disjointly, twelve occurring only within the training interval,
+Infiltration alone being present on both sides of the cut, and Bot
+occurring exclusively in the test partition. Detection on that corpus
+is thus partly a zero-shot task.
+
+Neither the group-split check nor the chronological-split check can be
+reproduced from the released tensors, since the address and timestamp
+columns are dropped before tensorisation; both are therefore performed
+from the raw corpora and their output is released in
+\texttt{results/verification/}. The group split on
+\texttt{IPV4\_SRC\_ADDR} and \texttt{IPV4\_DST\_ADDR} resolved to $242$
+unique host pairs with zero groups shared between the two partitions,
+and the timestamp column of CSE-CIC-IDS2018 parsed for every record
+(\texttt{parsed\_fraction}~$=1.0$) with the training and test intervals
+confirmed disjoint.
+
+%=====================================================================
+\section{The NF-UNSW-NB15 leakage episode in full}
+\label{sup:leak}
+
+\subsection{The defect and the route by which it was found}
+
+The released NF-UNSW-NB15-v2 CSV carries $45$ columns, of which two are
+labels: the binary \texttt{Label} and \texttt{Attack}, the attack-family
+name. The preprocessing stage of the first execution excluded the
+former but not the latter, and because \texttt{Attack} is a text column
+it was label-encoded and admitted as a feature. Its value set for benign
+flows is disjoint from its value set for malicious ones, so a
+membership rule on that one coordinate reproduces the label exactly, at
+an accuracy of $1.0000$ on both partitions.
+
+The single-threshold audit did not catch it, and the reason is exact
+rather than incidental. Alphabetical encoding of the ten values places
+\texttt{Benign} third, as code $2$ behind \texttt{Analysis} and
+\texttt{Backdoor}, so every single cut assigns at least one class
+wrongly: the best of them, $x>2$, misclassifies the $2{,}299$
+\texttt{Analysis} and $2{,}169$ \texttt{Backdoor} flows as benign and
+therefore scores $1-4{,}468/139{,}264=0.9679$ on the released file,
+against the $1.0000$ a membership test returns. Both figures are
+reproducible from the deposited subsample:
+
+\begin{verbatim}
+d = pd.read_csv("NF-UNSW-NB15-v2.csv")
+cats = sorted(d.Attack.unique())
+x = d.Attack.map({c: i for i, c in enumerate(cats)})
+((x != cats.index("Benign")) == d.Label).mean()   # 1.0
+((x > 2) == d.Label).mean()                       # 0.967917
+\end{verbatim}
+
+\noindent A gap of $0.032$ between the two audits is what separated a
+corpus that looked merely saturated from one in which a single
+coordinate carried the label. The defect
+was found instead by comparing the feature count the pipeline reported
+against the count the feature-importance analysis used, and the corpus
+was reprocessed and retrained with \texttt{Attack} withheld. Every
+NF-UNSW-NB15 figure in the paper comes from that corrected execution;
+NSL-KDD and CSE-CIC-IDS2018 were never affected and were verified
+record by record to be identical to their original values.
+
+The episode is reported rather than silently repaired because the
+detection route matters. A membership test over per-class value sets
+catches this failure and the threshold test that is conventional in
+leakage audits does not, so an audit built only on the latter will pass
+a corpus in which one coordinate determines the label.
+
+\subsection{Why saturation persists after the correction}
+
+That a $200$-tree Random Forest attains $0.9976$ accuracy with a
+seed dispersion of $2.5\times10^{-5}$ is the pattern one expects from a
+dominant, near-deterministic feature rather than from a hard problem
+solved well. We therefore examined the impurity-based feature
+importances of that model together with the best accuracy obtainable
+from each feature under a single threshold
+(\texttt{results/verification/verification.json}, field
+\texttt{leakage}). Three features are individually almost sufficient:
+\texttt{MAX\_TTL} and \texttt{MIN\_TTL} each separate the two classes
+at $0.9948$ accuracy with a single threshold and
+\texttt{MIN\_IP\_PKT\_LEN} at $0.9916$, and together they carry $0.576$
+of the total impurity-based importance mass.
+
+The time-to-live fields are the more diagnostic of the two kinds. A TTL
+value is a function of the operating system that emitted the packet and
+of the number of hops it traversed, not of whether the traffic is
+hostile; that it predicts the label at $99.5\%$ indicates that benign
+and malicious traffic in this capture originate from hosts that are
+distinguishable by network position or platform. Predictive power of
+this kind is a property of the testbed rather than of intrusion, and
+partitioning cannot remove it, since it is carried in the feature
+vector itself.
+
+\subsection{The feature-removal ablation}
+
+Whether the models rely on these features is a separate question, and
+it was tested directly rather than inferred. Table~\ref{tab:ablation}
+reports the result, computed on the group-aware split
+(\texttt{results/verification/ttl\_ablation.json}).
+
+\begin{table}[h]
+\centering
+\caption{Feature-removal ablation on NF-UNSW-NB15. Held-out accuracy of
+the Random Forest under the group-aware split, with the
+near-deterministic features withheld in turn. The $41$ features of the
+all-features row are the $43$ non-label columns of the released CSV
+less the two endpoint-address fields reserved as group keys.}
+\label{tab:ablation}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Features withheld & $d$ & Accuracy & Change \\
+\midrule
+none                                   & 41 & 0.997618 & --- \\
+\texttt{MAX\_TTL}                      & 40 & 0.997655 & $+3.7\times10^{-5}$ \\
+\texttt{MAX\_TTL}, \texttt{MIN\_TTL}   & 39 & 0.997508 & $-1.1\times10^{-4}$ \\
+\;\;+ \texttt{MIN\_IP\_PKT\_LEN}       & 38 & 0.997545 & $-7.3\times10^{-5}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The near-deterministic features are therefore removable, not
+load-bearing, and the natural reading that the corpus is saturated
+because of a small artefact is not supported. What the ablation shows
+instead is more general and, for the purposes of the study, more
+limiting. With the three features withheld, the strongest remaining
+single feature, \texttt{SERVER\_TCP\_FLAGS}, still separates the
+classes at $0.8573$ accuracy under one threshold against a
+majority-class baseline of $0.5103$, and each of the ten most important
+remaining features exceeds that baseline by between $0.17$ and $0.35$.
+Separability is thus distributed redundantly across many attributes
+rather than concentrated in a few. A benchmark with this property
+cannot discriminate between architectures on clean performance, because
+any reasonable model recovers the same decision from a different subset
+of features, and that is precisely the pattern the clean results show:
+four of the five architectures separate by $1.8\times10^{-3}$, an
+interval of the same order as the largest of their seed dispersions,
+with CNN1D trailing them by a further $2.8\times10^{-3}$.
+
+Two figures in this subsection are easily confused and are therefore
+distinguished explicitly. The single-threshold accuracy of
+\texttt{SERVER\_TCP\_FLAGS} is $0.8633$ when all features are present
+and $0.8573$ once the three near-deterministic features are withheld;
+the paper quotes the latter, because the claim it supports concerns
+what remains after their removal.
+
+%=====================================================================
+\section{Padding-masked re-evaluation in full}
+\label{sup:pad}
+
+The pseudo-sequence construction pads both NSL-KDD and NF-UNSW-NB15
+from $41$ to $64$ positions, so $35.94\%$ of each input vector is a
+constant zero. An $\ell_{\infty}$-bounded adversary perturbs every
+coordinate, including the padding, and therefore spends roughly a third
+of its budget on dimensions that are constant in training. Padding
+coordinates have no counterpart in any emittable flow, so evasion
+attributable to them is an artefact of the representation rather than a
+security finding, which makes the size of their contribution a question
+about the validity of the comparison and not merely about its
+interpretation.
+
+The white-box grid was therefore repeated on the two padded corpora
+with the perturbation confined to the informative coordinates, the
+padding positions being held at their clean value of zero at every
+step. The replication is reduced to the seeds $\{13,42\}$ for cost and
+was executed on an NVIDIA A100-SXM4-40\,GB device
+(\texttt{results/e3\_padding\_mask.json}). Before the masked arm is
+read, the harness itself was validated against the published unmasked
+figures on all $24$ (corpus, model, quantity) checks: it reproduces the
+clean and FGSM values to within $8.9\times10^{-5}$ and the PGD values,
+which begin from a random point in the ball, to within
+$3.4\times10^{-3}$, so the two arms are comparable.
+
+\begin{table}[h]
+\centering
+\caption{Padding-masked re-evaluation. Mean robust accuracy over the
+white-box grid with the perturbation applied to all coordinates
+(unmasked) and to the informative coordinates only (masked), averaged
+over the two corpora, both attacks and four budgets.}
+\label{tab:padagg}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & Unmasked & Masked & Change \\
+\midrule
+Transformer & 0.8605 & 0.8648 & $+0.0044$ \\
+Mamba       & 0.6633 & 0.7286 & $+0.0652$ \\
+CNN1D       & 0.6608 & 0.7500 & $+0.0892$ \\
+BiLSTM      & 0.5563 & 0.7155 & $+0.1592$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The masked attack proves weaker for every architecture, which settles
+the direction of the effect: perturbing the padding assists the
+adversary rather than wasting its budget. The assistance is strongly
+architecture dependent, as Table~\ref{tab:padagg} shows. The
+Transformer is almost indifferent to the padding, its two arms on
+NF-UNSW-NB15 differing by less than $2\times10^{-3}$ under either
+attack, whereas the state-space detector derives a measurable part of
+its apparent fragility from coordinates no adversary can reach.
+
+The dependence is also unevenly distributed in a way a narrower
+experiment would have misread. Under FGSM on NSL-KDD alone the
+state-space delta is $+0.0070$, which taken by itself would suggest
+padding independence; the dependence is concentrated in PGD, where it
+reaches $+0.1005$ on NF-UNSW-NB15 and $+0.0998$ on NSL-KDD.
+
+The consequence for the principal finding is that its direction
+survives and its magnitude does not. On this subset the mean white-box
+margin in favour of the Transformer falls from $+0.1971$ unmasked to
+$+0.1363$ masked, a reduction of $31\%$, and the architecture ordering
+is unchanged in both arms. No cell inverts: the margin stays positive
+in all four (corpus, attack) combinations, narrowing most under PGD on
+NF-UNSW-NB15, from $+0.2934$ to $+0.1947$, and not at all under FGSM on
+NSL-KDD ($+0.0732$ to $+0.0735$). The attention detector therefore
+remains the more robust architecture under a realistic adversary, but
+by roughly two thirds of the margin the unmasked grid reports, and the
+larger figure should not be quoted without that qualification.
+
+%=====================================================================
+\section{What the aggregate metrics conceal about severity}
+\label{sup:severity}
+
+Aggregate robust accuracy states how much detection is lost, not which
+intrusions are lost with it, and the per-category decomposition shows
+that the answer is architecture dependent and not stable across
+corpora. On NSL-KDD the volumetric categories dominate for the
+convolutional and recurrent baselines, with evasion rates of $0.773$
+and $0.804$ for DoS and $0.757$ and $0.472$ for Probe, whereas for the
+state-space and attention detectors the largest rates occur on U2R
+($0.194$) and Probe ($0.167$) respectively while DoS evasion remains at
+$0.068$ and $0.073$. Clean detection rates for R2L and U2R are low for
+every architecture ($0.104$--$0.313$), so the corresponding evasion
+rates are bounded from above by a small quantity.
+
+On NF-UNSW-NB15 clean detection remains at or above $0.9840$ in $35$ of
+the $36$ cells, the exception being CNN1D on Worms ($0.9600$), where one
+instance of $25$ is missed, and under attack the four architectures
+separate cleanly: the Transformer registers at most $0.004$ (DoS)
+across all nine categories, Mamba's largest rates are $0.143$
+(Generic), $0.125$ (Shellcode) and $0.036$ (DoS) with $0.000$ on Worms
+and $0.001$ on Reconnaissance, BiLSTM spans $0.080$ (Worms) to $0.938$
+(Analysis), and CNN1D is evadable in every category but Worms, reaching
+$0.994$ (Analysis), $0.982$ (Shellcode) and $0.967$ (Backdoor).
+
+On CSE-CIC-IDS2018 clean detection of the malicious categories is weak
+in absolute terms, between $0.015$ (CNN1D) and $0.149$ (Mamba) for
+Infiltration and between $0.000$ (CNN1D) and $0.006$ (Transformer) for
+Bot, so evasion rates are correspondingly small, the largest being
+$0.132$ (Mamba, Infiltration). One negative value is recorded,
+$-0.494$ for BiLSTM on Bot, where the adversarial detection rate
+($0.498$) exceeds the clean rate ($0.004$): the perturbation moves that
+architecture from labelling almost every Bot flow benign to labelling
+about half of them malicious. A reversal of this kind is what one
+expects when the clean decision on a category is essentially
+uninformative, and Bot is precisely the family the chronological split
+places wholly outside the training interval.
+
+A caveat concerns what the evasion success rate measures. Being defined
+on malicious instances alone, it is blind to how an architecture treats
+benign traffic, and the two can move in opposite directions. On
+NF-UNSW-NB15 under FGSM at $\varepsilon=0.1$ Mamba retains $0.955$ of
+its malicious detection on the first seed while its aggregate accuracy
+on that seed falls to $0.473$, which places its accuracy on the benign
+class at $0.011$: the perturbation drives it to label almost every
+benign flow malicious. CNN1D fails in the opposite direction on the
+same corpus, holding $0.974$ on the benign class while its malicious
+detection falls to $0.140$. A low evasion rate is therefore not by
+itself evidence of robustness, and the two-class decomposition released
+with the artefact should be read alongside the category table.
+
+%=====================================================================
+\section{Adversarial training: effective, but insufficiently verified}
+\label{sup:defence}
+
+FGSM-mixed adversarial training raises mean white-box robust accuracy
+in all six (dataset, model) combinations, by between $+0.1734$ and
+$+0.2506$ for the state-space detector and between $+0.2005$ and
+$+0.2498$ for the convolutional baseline, at a clean-accuracy cost that
+never exceeds $0.0167$ in magnitude and is of mixed sign
+(\texttt{results/defense\_results.csv}). The gains are largest at the
+largest budget, where the undefended models were weakest, and for both
+architectures they fall in the same cell: NF-UNSW-NB15 under PGD at
+$\varepsilon=0.1$, where the state-space detector rises from $0.2508$
+to $0.9762$ and the convolutional baseline from $0.3888$ to $0.9129$.
+
+One qualification governs how far these gains can be taken, and it is
+the reason the paper treats the defence arm as incompletely validated.
+The defended checkpoints were evaluated under the white-box grid only;
+no black-box transfer attack was run against them. Single-step
+adversarial training is known to be prone to catastrophic overfitting,
+in which robustness to the single-step attack rises sharply while
+robustness to multi-step attacks collapses, and the resulting model
+exhibits a degenerate loss surface on which a single gradient poorly
+reflects the loss. Two observations argue against that pathology here:
+the gains are realised under PGD as well as FGSM, and they are realised
+at every budget rather than only at the one the defence was trained at.
+But the decisive check is the transfer-attack check, precisely because
+it does not rely on the gradient the defence may have obscured, and it
+was not performed. The surrogates it requires are already trained and
+released, so the experiment is inexpensive; until it is run, the
+defence is validated only by the class of attack whose gradients its
+training may have shaped.
+
+%=====================================================================
+\section{Threat-model realism}
+\label{sup:threat}
+
+Perturbations in this study are generated in standardised feature space
+and are constrained only by the empirical feature box of the paper's
+Equation~(1). They are not required to correspond to flows that an
+adversary could actually emit, and the gap between the two is not
+incidental. A NetFlow record's fields are linked by protocol semantics
+and by arithmetic identities: byte and packet counters are
+non-negative integers, duration and throughput are related by
+definition, flag fields take values from a discrete set, and a
+perturbation that raises the packet count without raising the byte
+count describes a flow that cannot exist. An unconstrained
+$\ell_{\infty}$ perturbation violates such relations freely.
+
+Three consequences follow, and the paper states them rather than
+leaving them to be inferred. The reported robust accuracies are
+pessimistic as estimates of operational risk, since part of the
+measured degradation is caused by inputs no adversary can produce. The
+defence gains may be correspondingly optimistic, since a defence
+hardened against unconstrained perturbations has been hardened partly
+against a fiction. And whether the architecture ranking is stable under
+a constraint-aware attack is unknown: the literature is divided on
+whether domain constraints confer material robustness, with one line of
+work reporting that up to $82\%$ of the adversarial examples PGD
+produces violate learned constraints and that projecting onto the
+constrained set restores up to $34\%$ of accuracy, and another
+reporting that constraint-compliant attacks still reach
+misclassification rates above $95\%$ although an adversary restricted
+to five randomly chosen features, about a tenth of that space, succeeds
+just under $50\%$ of the time.
+
+Establishing which reading holds for this comparison requires either a
+projection onto the feasible set after each attack step or an attack
+that searches within it. Neither was performed here, and the paper's
+robustness figures should be read as bounding the attainable evasion
+rate from above rather than as certifying an end-to-end network-level
+exploit.
+
+%=====================================================================
+\section{Capacity ablation in full}
+\label{sup:capacity}
+
+All results in the paper rest on a single capacity setting shared by
+every architecture, and the clean-accuracy comparison was therefore
+repeated at $d_{\mathrm{model}}\in\{32,64\}$ over the two seeds
+$\{13,42\}$ with all remaining hyperparameters fixed
+(\texttt{results/ablation\_results.csv}).
+
+\begin{table}[h]
+\centering
+\caption{Capacity ablation. Mean clean accuracy over two seeds at two
+embedding widths.}
+\label{tab:cap}
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Dataset & Model & $d_{\mathrm{model}}=32$ & $d_{\mathrm{model}}=64$ & Change \\
+\midrule
+\multirow{4}{*}{NSL-KDD}
+ & Mamba       & 0.7435 & 0.7658 & $+0.0223$ \\
+ & Transformer & 0.7850 & 0.7936 & $+0.0086$ \\
+ & CNN1D       & 0.8005 & 0.7549 & $-0.0456$ \\
+ & BiLSTM      & 0.7868 & 0.8139 & $+0.0271$ \\
+\midrule
+\multirow{4}{*}{NF-UNSW-NB15}
+ & Mamba       & 0.9970 & 0.9971 & $+0.0001$ \\
+ & Transformer & 0.9966 & 0.9967 & $+0.0001$ \\
+ & CNN1D       & 0.9872 & 0.9949 & $+0.0076$ \\
+ & BiLSTM      & 0.9947 & 0.9964 & $+0.0016$ \\
+\midrule
+\multirow{4}{*}{CSE-CIC-IDS2018}
+ & Mamba       & 0.5694 & 0.5153 & $-0.0541$ \\
+ & Transformer & 0.5705 & 0.5166 & $-0.0539$ \\
+ & CNN1D       & 0.5040 & 0.5460 & $+0.0420$ \\
+ & BiLSTM      & 0.5136 & 0.5681 & $+0.0545$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two inversions must be recorded as qualifications of the principal
+findings. The four-way ordering is capacity-invariant only on
+NF-UNSW-NB15, where Mamba leads at both widths; on NSL-KDD the leading
+architecture changes with width, CNN1D being strongest at $32$
+($0.8005$) and BiLSTM at $64$ ($0.8139$), and on CSE-CIC-IDS2018 the
+ordering inverts outright, the two highest-scoring models at $32$ being
+the two lowest at $64$. With two seeds and a dispersion reaching
+$\pm0.0834$ in the CSE-CIC-IDS2018 cells, that inversion is most
+parsimoniously read as noise rather than as a capacity effect, which is
+itself the finding: on a corpus where models do not learn, an ablation
+cannot discriminate.
+
+The pairwise relation carrying the central comparison of the study is
+also not uniform. The Transformer exceeds Mamba on clean accuracy in
+four of the six (corpus, width) cells and trails it in the two
+NF-UNSW-NB15 cells by $0.0003$ and $0.0004$. That margin is substantial
+only on NSL-KDD, at $0.0415$ at $d_{\mathrm{model}}=32$ and $0.0277$ at
+$64$, in both cases larger than either model's seed dispersion; across
+the four cells on the other two corpora its magnitude never exceeds
+$0.0013$, well inside the dispersion observed on CSE-CIC-IDS2018, so
+those four cells establish no ordering in either direction.
+
+Two restrictions bound what the ablation can settle in any case. It
+varies clean accuracy alone, and therefore offers no evidence on
+whether the robustness findings, which are the actual subject of the
+study, are artefacts of the chosen capacity; and with two widths and
+two seeds it lacks the power to resolve the CSE-CIC-IDS2018 inversion.
+
+%=====================================================================
+\section{Index of the deposited tables and figures}
+\label{sup:index}
+
+The tables and figures the paper omits are deposited with the artefact
+rather than reproduced here, in the forms below. Aggregated tables are
+in \texttt{results/tables/} as CSV, Markdown and \LaTeX{}; the rendered
+copies used during preparation are in \texttt{published/tables\_tex/}
+and \texttt{published/figures/}, with PNG versions in
+\texttt{published/figures\_png/}.
+
+\begin{table}[h]
+\centering
+\caption{Deposited tables.}
+\small
+\begin{tabular}{@{}l p{0.62\textwidth}@{}}
+\toprule
+File & Contents \\
+\midrule
+\texttt{T1\_ana\_ozet\_sonuclari}      & All five detection metrics per (dataset, model, attack, $\varepsilon$) cell, mean and standard deviation \\
+\texttt{T2\_istatistiksel\_...} & Primary paired comparison against the pre-specified comparator \\
+\texttt{T2b\_..\_posthoc}              & Secondary comparison against the per-cell strongest competitor \\
+\texttt{T3\_saldiri\_turu\_...} & Evasion success rate per attack category \\
+\texttt{T4\_cikarim\_verimliligi}      & Parameter counts, latency and throughput at both batch regimes \\
+\texttt{T5\_savunma\_etkinligi} & Defended against undefended, per (dataset, model, attack, $\varepsilon$) \\
+\texttt{T6\_hiperparametre\_...} & Capacity ablation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+One further frame is deposited under
+\texttt{results/superseded/}: the result file of the first execution of
+the grid, before the \texttt{Attack} leakage of
+Section~\ref{sup:leak} was corrected. No figure in the paper comes from
+it. It is kept so that one claim which would otherwise rest on
+testimony can be checked, namely that the obfuscated-gradient
+diagnostic (5) fired before the correction and does not after it: in
+that frame the Transformer's accuracy on NF-UNSW-NB15 never falls below
+$0.9976$ at any budget, so a tenfold increase in $\varepsilon$ costs it
+at most $0.0024$, whereas in the corrected run the same tenfold
+increase costs $0.051$ under FGSM and $0.046$ under PGD. A leaking
+feature can therefore imitate gradient masking on this diagnostic, and
+the two are separated only by auditing the features rather than the
+curves.
+
+\begin{table}[h]
+\centering
+\caption{Deposited figures, in \texttt{published/figures/}.}
+\small
+\begin{tabular}{@{}l p{0.60\textwidth}@{}}
+\toprule
+File pattern & Contents \\
+\midrule
+\texttt{clean\_acc\_*}   & Clean accuracy by architecture, one panel per corpus \\
+\texttt{robust\_fgsm\_*} & Robust accuracy against $\varepsilon$ under FGSM, one per corpus \\
+\texttt{robust\_pgd\_*}  & The same under PGD \\
+\texttt{catvuln\_*}      & Evasion success rate by attack category, representative cells \\
+\texttt{latency\_bs1}, \texttt{latency\_bs512} & Measured latency at the two batch regimes \\
+\texttt{params\_vs\_robust} & Parameter count and latency against mean robust accuracy \\
+\texttt{defense\_*}      & Robustness curves before and after adversarial training \\
+\texttt{ablation\_*}     & Clean accuracy against embedding width, one per corpus \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+The two verification records are
+\texttt{results/verification/verification.json}, which holds the two numeric
+S6 implementation checks, the split verification and the
+single-threshold leakage audit, and
+\texttt{results/verification/ttl\_ablation.json}, which holds the
+feature-removal ablation of Section~\ref{sup:leak}. The padding-masked
+re-evaluation of Section~\ref{sup:pad} is in
+\texttt{results/e3\_padding\_mask.\{json,csv,tex\}}. The resolved run
+configuration, including every seed, is in
+\texttt{results/logs/config.json}.
+
+\end{document}

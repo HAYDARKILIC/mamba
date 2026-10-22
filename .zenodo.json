@@ -1,7 +1,7 @@
 {
   "upload_type": "software",
   "title": "Adversarial Robustness of Mamba-Based Network Intrusion Detection: Code and Results",
-  "description": "<p>Reproducibility artefact for a controlled comparison of a selective state-space (Mamba/S6) intrusion detector against Transformer, one-dimensional convolutional, bidirectional recurrent and Random Forest baselines on NSL-KDD, NF-UNSW-NB15-v2 and CSE-CIC-IDS2018, under white-box (FGSM, PGD) and black-box transfer attacks over seven random seeds.</p><p>Contents: the full experimental pipeline as a notebook; verification notebooks for the S6 implementation, the partitioning and a single-threshold leakage audit; the padding-masked re-evaluation; standalone verification scripts; and every result file behind the reported tables and figures. <code>analysis/reproduce_claims.py</code> recomputes 35 of the paper's headline numbers from the released result files in seconds and requires no GPU and no dataset download.</p><p>The manuscript is not included. Preprocessed tensor caches, model checkpoints and the subsampled corpora are distributed separately because of their size.</p>",
+  "description": "<p>Reproducibility artefact for a controlled comparison of a selective state-space (Mamba/S6) intrusion detector against Transformer, one-dimensional convolutional, bidirectional recurrent and Random Forest baselines on NSL-KDD, NF-UNSW-NB15-v2 and CSE-CIC-IDS2018, under white-box (FGSM, PGD) and black-box transfer attacks over seven random seeds.</p><p>Contents: the full experimental pipeline as a notebook; verification notebooks for the S6 implementation, the partitioning and a single-threshold leakage audit; the padding-masked re-evaluation; standalone verification scripts; and every result file behind the reported tables and figures. <code>analysis/reproduce_claims.py</code> recomputes 58 of the paper's headline numbers from the released result files in seconds and requires no GPU and no dataset download. The release also carries the supplementary material the paper refers to (<code>supplementary/</code>): the derivations, pseudo-code and extended leakage, padding-mask, severity, defence-verification, threat-model and capacity analyses omitted from the paper for length, with the result file behind every quantity named in place. <code>results/superseded/</code> holds the result frame of the first execution of the grid, in which the <code>Attack</code> column of NF-UNSW-NB15-v2 leaked the label into the feature matrix; no published number comes from it, and it is deposited only so that the paper's claim about how that defect imitated a gradient-masking signature can be checked against data.</p><p>The manuscript is not included. Preprocessed tensor caches, model checkpoints and the subsampled corpora are distributed separately because of their size.</p>",
   "creators": [
     {
       "name": "Kilic, Haydar",
@@ -29,5 +29,6 @@
     "PGD",
     "adversarial training",
     "reproducibility"
-  ]
+  ],
+  "version": "v2.0.1"
 }
