@@ -19,7 +19,7 @@ authors:
       Department of Artificial Intelligence Engineering,
       Ostim Technical University, Ankara, Turkey
 license: MIT
-version: v2.0.1
+version: v2.0.2
 date-released: "2026-10-22"
 doi: 10.5281/zenodo.23497561
 repository-code: "https://github.com/HAYDARKILIC/mamba"

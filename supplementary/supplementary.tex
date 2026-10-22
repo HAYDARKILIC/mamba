@@ -66,6 +66,11 @@
 \DeclareMathOperator{\Proj}{\Pi}
 
 \renewcommand{\thesection}{S\arabic{section}}
+% The contents-list number box is sized for two characters; "S10"
+% needs a little more, or it overflows its box by 0.6 pt.
+\makeatletter
+\renewcommand*\l@section{\@dottedtocline{1}{1.5em}{2.6em}}
+\makeatother
 \renewcommand{\theequation}{S\arabic{equation}}
 \renewcommand{\thetable}{S\arabic{table}}
 
@@ -98,7 +103,7 @@ deposited tables and figures.
 The main paper cites the sections of this document as S1--S10. Code,
 result frames and this document are archived together at
 \url{https://doi.org/10.5281/zenodo.23497561} (concept identifier;
-release v2.0.1); the corpus subsamples are in the companion record
+release v2.0.2); the corpus subsamples are in the companion record
 \url{https://doi.org/10.5281/zenodo.23499680}. This document is not
 self-contained and is to be read with the paper.
 
@@ -486,13 +491,21 @@ The native feature dimensionalities are $41$, $41$ and $79$, so the
 fixed pseudo-sequence length $L=64$ entails zero-padding of the
 trailing $23$ coordinates, $35.94\%$ of the sequence, for the first two
 corpora and the truncation of $15$ trailing attributes for
-CSE-CIC-IDS2018. The automated health audit reported no residual
-NaN/Inf entries in any partition and identified $24$, $23$ and $8$
-near-zero-variance features respectively. These counts are largely an
-artefact of the pseudo-sequence construction rather than of the
-underlying telemetry: for NF-UNSW-NB15 all $23$ are padded positions,
-and for NSL-KDD $23$ of the $24$ are, the remaining one being a single
-genuinely constant input attribute. CSE-CIC-IDS2018 is truncated rather
+CSE-CIC-IDS2018. The automated health audit
+(\texttt{results/logs/\allowbreak data\_validation\_\allowbreak 20260710\_193652.log})
+reported no residual NaN/Inf entries in any partition and identified
+$24$ and $8$ near-zero-variance features on NSL-KDD and
+CSE-CIC-IDS2018, whose preprocessing the correction of
+Section~\ref{sup:leak} left untouched. Its NF-UNSW-NB15 line is the one
+quantity in this document that the correction supersedes: it counts
+$22$, against the $42$-column matrix that admitted \texttt{Attack};
+with that column withheld the corpus contributes $41$ features and
+therefore $23$ constant padded positions, and no post-correction run of
+the audit is deposited. These counts are largely an artefact of the
+pseudo-sequence construction rather than of the underlying telemetry:
+for NF-UNSW-NB15 all $23$ are padded positions, and for NSL-KDD $23$ of
+the $24$ are, the remaining one being a single genuinely constant input
+attribute. CSE-CIC-IDS2018 is truncated rather
 than padded and therefore contributes no padded positions at all, so
 all $8$ of the columns flagged on that corpus are attributes that are
 genuinely constant across its training partition.
