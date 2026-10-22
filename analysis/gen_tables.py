@@ -14,7 +14,13 @@ import pandas as pd, numpy as np, io
 d = pd.read_csv(os.path.join(RESULTS,'master_results.csv'))
 defn = pd.read_csv(os.path.join(RESULTS,'defense_results.csv'))
 abl = pd.read_csv(os.path.join(RESULTS,'ablation_results.csv'))
-t2 = pd.read_csv(os.path.join(RESULTS,'tables','T2_istatistiksel_anlamlilik.csv'))
+# The pipeline now emits the significance analysis as two frames: T2 carries
+# the pre-specified comparator (the Transformer) and T2b the post-hoc
+# strongest competitor.  The primary table below is recomputed from
+# master_results.csv rather than read from either, so only the supplementary
+# post-hoc table consumes a frame here.
+t2b = pd.read_csv(os.path.join(RESULTS,'tables',
+                               'T2b_istatistiksel_anlamlilik_posthoc.csv'))
 t3 = pd.read_csv(os.path.join(RESULTS,'tables','T3_saldiri_turu_kirilganligi.csv'))
 t4 = pd.read_csv(os.path.join(RESULTS,'tables','T4_cikarim_verimliligi.csv'))
 
@@ -145,10 +151,10 @@ out['T4'] = '\n'.join(r for r in rows if r)
 # ---- Table 4b (secondary, supplementary): post-hoc strongest competitor ----
 rows = []
 for ds in DS:
-    sub = t2[t2.dataset == ds]
+    sub = t2b[t2b.dataset == ds]
     for j, (_, r) in enumerate(sub.iterrows()):
         lead = f'\\multirow{{4}}{{*}}{{{DSN[ds]}}}' if j == 0 else ''
-        star = '$\\ast$' if r['anlamli_holm_p<0.05'] else ''
+        star = '$\\ast$' if r['p_value_holm'] < 0.05 else ''
         atk = ('Transfer' if r['attack'] == 'BlackBoxTransfer'
                else 'Clean' if r['attack'] == 'clean' else r['attack'])
         rows.append(f"{lead} & {atk} & {disp(r['en_iyi_karsilastirma_modeli'])} & "

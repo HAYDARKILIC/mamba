@@ -11,6 +11,14 @@
   ],
   "license": "mit",
   "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.23499680",
+      "relation": "isSupplementedBy",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    }
+  ],
   "keywords": [
     "network intrusion detection",
     "adversarial robustness",

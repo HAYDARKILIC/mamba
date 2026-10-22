@@ -8,6 +8,13 @@ results/. Runtime is a few seconds.
     python analysis/reproduce_claims.py
 
 Any row marked MISMATCH is a discrepancy between the manuscript and the data.
+
+The reported values correspond to the post-leakage-fix run 20261021_031658
+(main grid) and 20261021_190939 (the padding-mask re-evaluation). The earlier
+run 20260710_193652 carried a target leak in the NF-UNSW-NB15 preprocessing:
+the `Attack` column reached the feature matrix and determined the label
+exactly. NSL-KDD and CSE-CIC-IDS2018 were unaffected and their rows are
+bit-identical across the two runs.
 """
 import os, json
 import numpy as np
@@ -43,10 +50,10 @@ claim("4.2", "Mamba, CIC-IDS2018, clean AUC",
              & (master.attack == "clean")].auc.mean(), 0.4925)
 
 # ---- Section 4.3 white-box ----
-claim("4.3", "Transformer, mean robust acc", adv[adv.model == "Transformer"].accuracy.mean(), 0.7502)
-claim("4.3", "Mamba, mean robust acc", adv[adv.model == "Mamba"].accuracy.mean(), 0.6049)
-claim("4.3", "CNN1D, mean robust acc", adv[adv.model == "CNN1D"].accuracy.mean(), 0.5425)
-claim("4.3", "BiLSTM, mean robust acc", adv[adv.model == "LSTM"].accuracy.mean(), 0.4751)
+claim("4.3", "Transformer, mean robust acc", adv[adv.model == "Transformer"].accuracy.mean(), 0.7450)
+claim("4.3", "Mamba, mean robust acc", adv[adv.model == "Mamba"].accuracy.mean(), 0.5868)
+claim("4.3", "CNN1D, mean robust acc", adv[adv.model == "CNN1D"].accuracy.mean(), 0.5441)
+claim("4.3", "BiLSTM, mean robust acc", adv[adv.model == "LSTM"].accuracy.mean(), 0.5315)
 
 # ---- Section 4.4 black-box ----
 # ASR is computed per (dataset, model, seed, eps) and then averaged over
@@ -59,7 +66,7 @@ bb = master[master.attack == "BlackBoxTransfer"].copy()
 bb["asr"] = bb.apply(
     lambda r: 1 - r.accuracy / clean_seed[(r.dataset, r.model, r.seed)], axis=1)
 asr = bb.groupby(["dataset", "model", "eps"])["asr"].mean().reset_index()
-claim("4.4", "max ASR, Mamba (transfer)", asr[asr.model == "Mamba"].asr.max(), 0.0194)
+claim("4.4", "max ASR, Mamba (transfer)", asr[asr.model == "Mamba"].asr.max(), 0.1258)
 claim("4.4", "max ASR, BiLSTM (transfer)", asr[asr.model == "LSTM"].asr.max(), 0.8352)
 claim("4.4", "max ASR, Transformer (transfer)",
       asr[asr.model == "Transformer"].asr.max(), 0.0567)
@@ -75,14 +82,14 @@ for ds, atk, dz_rep in [("NSL-KDD", "FGSM", -2.11), ("NSL-KDD", "PGD", -8.16),
 
 # ---- Section 4.7 efficiency ----
 lat = t4.set_index("model")
-claim("4.7", "Mamba latency b=1 (ms)", lat.loc["Mamba", "latency_ms_bs1"], 26.2587)
+claim("4.7", "Mamba latency b=1 (ms)", lat.loc["Mamba", "latency_ms_bs1"], 25.7807)
 claim("4.7", "Mamba/fastest latency ratio",
-      lat.loc["Mamba", "latency_ms_bs1"] / lat["latency_ms_bs1"].min(), 51.29, 2)
+      lat.loc["Mamba", "latency_ms_bs1"] / lat["latency_ms_bs1"].min(), 50.42, 2)
 
 # ---- Section 4.8 defence ----
 wb = defense[defense.attack.isin(["FGSM", "PGD"])].groupby(["model", "defense"])["accuracy"].mean()
-claim("4.8", "Mamba defence gain", wb[("Mamba", "adv_train")] - wb[("Mamba", "none")], 0.1892)
-claim("4.8", "CNN1D defence gain", wb[("CNN1D", "adv_train")] - wb[("CNN1D", "none")], 0.2226)
+claim("4.8", "Mamba defence gain", wb[("Mamba", "adv_train")] - wb[("Mamba", "none")], 0.2057)
+claim("4.8", "CNN1D defence gain", wb[("CNN1D", "adv_train")] - wb[("CNN1D", "none")], 0.2185)
 
 # ---- Section 3.3 implementation validation ----
 claim("3.3", "CHECK 1 deviation (1e-8 units)", ver["results"]["check1"] * 1e8, 1.86, 2)
@@ -107,15 +114,15 @@ claim("5.7", "SERVER_TCP_FLAGS residual", a["_kalan_tek_esik"]["SERVER_TCP_FLAGS
 with open(os.path.join(RESULTS, "e3_padding_mask.json")) as fh:
     e3 = json.load(fh)
 ag = e3["aggregate"]
-for m, rep in [("Transformer", 0.0036), ("CNN1D", 0.1263),
-               ("Mamba", 0.1308), ("LSTM", 0.2645)]:
+for m, rep in [("Transformer", 0.0044), ("CNN1D", 0.0892),
+               ("Mamba", 0.0652), ("LSTM", 0.1592)]:
     claim("5.7", f"padding-mask delta, {m}", ag[m]["delta"], rep)
 margin_unmasked = ag["Transformer"]["unmasked"] - ag["Mamba"]["unmasked"]
 margin_masked = ag["Transformer"]["masked"] - ag["Mamba"]["masked"]
-claim("5.7", "headline margin, unmasked", margin_unmasked, 0.2259)
-claim("5.7", "headline margin, masked", margin_masked, 0.0987)
+claim("5.7", "headline margin, unmasked", margin_unmasked, 0.1971)
+claim("5.7", "headline margin, masked", margin_masked, 0.1363)
 claim("5.7", "reduction in the margin (%)",
-      100 * (1 - margin_masked / margin_unmasked), 56, 0)
+      100 * (1 - margin_masked / margin_unmasked), 31, 0)
 
 # ---- report ----
 print(f"{'':4s} {'Sec':5s} {'claim':44s} {'computed':>12s} {'in paper':>10s}")
