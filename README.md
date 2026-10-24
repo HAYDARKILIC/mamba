@@ -130,12 +130,12 @@ pip install -r requirements.txt
 python analysis/reproduce_claims.py
 ```
 
-Recomputes 58 headline claims from `results/` and prints computed value
+Recomputes 74 headline claims from `results/` and prints computed value
 against value as printed in the manuscript. Exit status is non-zero if any
 row reads `MISMATCH`. Expected output ends with:
 
 ```
-58 claims checked, 0 mismatch(es).
+74 claims checked, 0 mismatch(es).
 ```
 
 The published tables and figures are committed under `published/`, so they

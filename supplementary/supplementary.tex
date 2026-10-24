@@ -31,6 +31,11 @@
 \sloppy
 \emergencystretch=2em
 \usepackage[hidelinks,breaklinks]{hyperref}
+% Addresses in the body font, broken only after a slash, as in the paper.
+\urlstyle{same}
+\makeatletter
+\def\UrlBreaks{\do\/}
+\makeatother
 \SetAlgorithmName{Algorithm}{Algorithm}{List of Algorithms}
 \SetKwInput{KwData}{Input}
 \SetKwInput{KwResult}{Output}
@@ -77,10 +82,22 @@
 \title{Supplementary Material\\[2pt]
 \large Threat-Model Dependence in the Adversarial Robustness of
 Mamba-Based Network Intrusion Detection}
+% ---------------------------------------------------------------
+% ANONYMOUStrue  -> yazar adi, kurum, e-posta ve arsiv baglantilari GIZLENIR
+% ANONYMOUSfalse -> tam kunye gosterilir (kabul sonrasi / kamera-hazir)
+% Ana metindeki anahtarla ayni degere ayarlanmalidir.
+% ---------------------------------------------------------------
+\newif\ifANONYMOUS
+\ANONYMOUSfalse
+\ifANONYMOUS
+\author{\normalsize \textit{Author name and affiliation withheld for
+double-blind review}}
+\else
 \author{Haydar Kilic\\[2pt]
 \normalsize Department of Artificial Intelligence Engineering,
 Ostim Technical University, Ankara, Turkey\\
 \normalsize \texttt{haydar.kilic@ostimteknik.edu.tr}}
+\fi
 \date{}
 
 \begin{document}
@@ -101,11 +118,17 @@ deposited tables and figures.
 
 \medskip\noindent
 The main paper cites the sections of this document as S1--S10. Code,
-result frames and this document are archived together at
-\url{https://doi.org/10.5281/zenodo.23497561} (concept identifier;
-release v2.0.2); the corpus subsamples are in the companion record
-\url{https://doi.org/10.5281/zenodo.23499680}. This document is not
-self-contained and is to be read with the paper.
+result frames and this document are archived together, and the corpus
+subsamples in a companion record;
+\ifANONYMOUS
+both identifiers are withheld for double-blind review.
+\else
+the identifiers are
+\href{https://doi.org/10.5281/zenodo.23497561}{\nolinkurl{doi.org/10.5281/zenodo.23497561}}
+(concept identifier; release v2.0.3) and
+\href{https://doi.org/10.5281/zenodo.23499680}{\nolinkurl{doi.org/10.5281/zenodo.23499680}}.
+\fi
+This document is not self-contained and is to be read with the paper.
 
 \tableofcontents
 
@@ -725,8 +748,8 @@ reaches $+0.1005$ on NF-UNSW-NB15 and $+0.0998$ on NSL-KDD.
 The consequence for the principal finding is that its direction
 survives and its magnitude does not. On this subset the mean white-box
 margin in favour of the Transformer falls from $+0.1971$ unmasked to
-$+0.1363$ masked, a reduction of $31\%$, and the architecture ordering
-is unchanged in both arms. No cell inverts: the margin stays positive
+$+0.1363$ masked, a reduction of $31\%$. No cell inverts: the margin
+stays positive
 in all four (corpus, attack) combinations, narrowing most under PGD on
 NF-UNSW-NB15, from $+0.2934$ to $+0.1947$, and not at all under FGSM on
 NSL-KDD ($+0.0732$ to $+0.0735$). The attention detector therefore
@@ -905,8 +928,8 @@ findings. The four-way ordering is capacity-invariant only on
 NF-UNSW-NB15, where Mamba leads at both widths; on NSL-KDD the leading
 architecture changes with width, CNN1D being strongest at $32$
 ($0.8005$) and BiLSTM at $64$ ($0.8139$), and on CSE-CIC-IDS2018 the
-ordering inverts outright, the two highest-scoring models at $32$ being
-the two lowest at $64$. With two seeds and a dispersion reaching
+leading pair becomes the trailing one, the two highest-scoring models
+at $32$ being the two lowest at $64$. With two seeds and a dispersion reaching
 $\pm0.0834$ in the CSE-CIC-IDS2018 cells, that inversion is most
 parsimoniously read as noise rather than as a capacity effect, which is
 itself the finding: on a corpus where models do not learn, an ablation

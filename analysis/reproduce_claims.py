@@ -245,6 +245,60 @@ claim("4.9", "ablation cells where Transformer exceeds Mamba",
           for ds in ["NSL-KDD", "NF-UNSW-NB15", "CICIDS2018"] for dm in [32, 64]),
       4, 0)
 
+# ---- Added in v2.0.3: Sections 5.1, 5.3, 5.5 and the abstract ----
+# Section 5.1: the comparator leads in every white-box cell of the grid.
+_wbc = [(ds, a, e) for ds in _D for a in ["FGSM", "PGD"]
+        for e in [0.01, 0.03, 0.05, 0.1]]
+claim("5.1", "white-box (corpus, attack, budget) cells", len(_wbc), 24, 0)
+claim("5.1", "cells where the comparator leads Mamba",
+      sum(mu_[(ds, "Transformer", a, e)] > mu_[(ds, "Mamba", a, e)]
+          for ds, a, e in _wbc), 24, 0)
+# Section 5.1: the clean-normalised transfer measure (1 - ASR) favours the
+# proposed detector on two of the three corpora, while the level never does.
+claim("5.1", "corpora where 1-ASR favours Mamba",
+      sum(1 for d in _D if _asr(d, "Mamba", "BlackBoxTransfer")
+          < _asr(d, "Transformer", "BlackBoxTransfer")), 2, 0)
+
+# Section 5.2, diagnostic 2: a black-box attack never beats the white-box one
+# for the three targets whose surrogate is a genuine architectural mismatch.
+claim("5.2", "diagnostic 2: cells where transfer beats white-box",
+      sum(mu_[(ds, mo, "BlackBoxTransfer", e)] < mu_[(ds, mo, a, e)]
+          for ds in _D for mo in ["Mamba", "Transformer", "CNN1D"]
+          for e in [0.03, 0.1] for a in ["FGSM", "PGD"]), 0, 0)
+
+# Section 5.3: the one datum against the weak-surrogate explanation, and the
+# three transfer level differences that the clean-normalised measure reverses.
+claim("5.3", "CNN1D transfer cost, NSL-KDD @0.1 (%)",
+      100 * _asr("NSL-KDD", "CNN1D", "BlackBoxTransfer", 0.1), 29.3, 1)
+for _d, _rep in [("NSL-KDD", 0.0036), ("NF-UNSW-NB15", 0.0510),
+                 ("CICIDS2018", 0.0044)]:
+    _tr = master[(master.dataset == _d) & (master.attack == "BlackBoxTransfer")]
+    claim("5.3", f"transfer level gap, {_d}",
+          _tr[_tr.model == "Transformer"].accuracy.mean()
+          - _tr[_tr.model == "Mamba"].accuracy.mean(), _rep)
+
+# Section 5.4: masking the padding helps every architecture, and very unevenly.
+for _mo, _rep in [("Transformer", 0.0044), ("Mamba", 0.0652),
+                  ("CNN1D", 0.0892), ("LSTM", 0.1592)]:
+    claim("5.4", f"padding-mask gain, {_mo}", e3["aggregate"][_mo]["delta"], _rep)
+
+# Section 5.5: the sparsest category carried into the per-category analysis.
+_t3 = pd.read_csv(os.path.join(RESULTS, "tables",
+                               "T3_saldiri_turu_kirilganligi.csv"))
+claim("5.5", "sparsest analysed category (instances)",
+      _t3[["dataset", "attack_category", "n_samples"]]
+      .drop_duplicates().n_samples.min(), 25, 0)
+
+# ---- Abstract: the white-box subset of the twelve paired comparisons ----
+_t2 = pd.read_csv(os.path.join(RESULTS, "tables",
+                               "T2_istatistiksel_anlamlilik.csv"))
+_t2w = _t2[_t2.attack.isin(["FGSM", "PGD"])]
+claim("abs", "white-box paired comparisons", len(_t2w), 6, 0)
+claim("abs", "of them significant after Holm",
+      int(_t2w["anlamli_holm_p<0.05"].sum()), 5, 0)
+claim("abs", "of them favouring the comparator",
+      int((_t2w.t_stat < 0).sum()), 6, 0)
+
 # ---- report ----
 print(f"{'':4s} {'Sec':5s} {'claim':44s} {'computed':>12s} {'in paper':>10s}")
 print("-" * 80)
